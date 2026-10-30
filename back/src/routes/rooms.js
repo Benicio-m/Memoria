@@ -74,6 +74,7 @@ rooms.post("/write", async (c) => {
 // (grupos que aguardam autorização do professor)
 rooms.get("/groups/pending", authMiddleware, async (c) => {
   try {
+    await conectarMongo()
     const user = c.get("user");
 
     // Apenas professores podem ver a fila de autorização
@@ -115,6 +116,7 @@ rooms.get("/groups/pending", authMiddleware, async (c) => {
 // Grupo entra na sala com código + nomes dos integrantes
 rooms.post("/join", async (c) => {
   try {
+    await conectarMongo()
     const { code, name } = await c.req.json();
 
     if (!code || !name) {
@@ -215,6 +217,7 @@ rooms.post("/join", async (c) => {
 // PATCH /rooms/:roomId/groups/:groupId
 rooms.patch("/:roomId/groups/:groupId", authMiddleware, async (c) => {
   try {
+    await conectarMongo()
     const user = c.get("user");
     const { roomId, groupId } = c.req.param();
     const { status } = await c.req.json();
@@ -269,6 +272,7 @@ rooms.patch("/:roomId/groups/:groupId", authMiddleware, async (c) => {
 // Verificar professor/aluno logado
 rooms.get("/me", authMiddleware, async (c) => {
   try {
+    await conectarMongo()
     const user = c.get("user");
 
     if (user.role === "professor") {
@@ -327,6 +331,7 @@ rooms.get("/me", authMiddleware, async (c) => {
 // Logout do professor
 rooms.post("/logout", authMiddleware, async (c) => {
   try {
+    await conectarMongo()
     const user = c.get("user");
 
     return c.json({
@@ -374,6 +379,7 @@ rooms.post("/", authMiddleware, async (c) => {
 // Listar salas abertas do professor logado
 rooms.get("/open", authMiddleware, async (c) => {
   try {
+    await conectarMongo()
     const user = c.get("user");
 
     if (user.role !== "professor") {

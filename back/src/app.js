@@ -1,6 +1,26 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import rooms from "./routes/rooms.js";
+import mongoose from "mongoose";
+
+let cached = global.mongoose;
+
+if (!cached) {
+  cached = global.mongoose = { conn: null, promise: null };
+}
+
+export async function conectarMongo() {
+  if (cached.conn) return cached.conn;
+
+  if (!cached.promise) {
+    cached.promise = mongoose.connect(process.env.MONGODB_URI, {
+      serverSelectionTimeoutMS: 10000,
+    });
+  }
+
+  cached.conn = await cached.promise;
+  return cached.conn;
+}
 
 const app = new Hono();
 app.use("*", async (c, next) => {
