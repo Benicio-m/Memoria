@@ -33,7 +33,7 @@ function Home() {
 
     try {
       const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/rooms/${salaId}/alunos/${grupoId}`,
+        `${import.meta.env.VITE_API_URL}/rooms/${salaId}/groups/${grupoId}`,
         {
           method: 'PATCH',
           headers: {
@@ -286,7 +286,7 @@ function Home() {
                           <DialogTitle className="font-konkhmer-sleokchher text-2xl">Informações da sala</DialogTitle>
                           <h2 className="font-konkhmer-sleokchher text-start text-xl">Código: {r.code}</h2>
                           <h2 className="font-konkhmer-sleokchher text-start text-xl">Grupos pendentes:</h2>
-                            {pendingGroups.filter(g => g.roomId === r._id).map(g => (
+                            {pendingGroups.filter(gr => gr.roomId === r._id).map(g => (
                               <div className="flex flex-row items-center justify-start w-full max-w-2.5xl p-2 sm:p-3 m-0 font-konkhmer-sleokchher">
                                 <h2 className="text-center text-lg whitespace-nowrap">{g.name}</h2>
                                 <div className="flex w-full items-center justify-end place-content-start gap-2">
