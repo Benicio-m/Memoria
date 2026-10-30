@@ -298,7 +298,7 @@ function Home() {
                               <h2 className="font-konkhmer-sleokchher text-start text-xl">Grupos membros:</h2>
                               <ul className="ml-4 list-disc text-base">
                                 {g.members?.map((m: string, i: number) => (
-                                  <li kei={i}>{m}</li>
+                                  <li key={i}>{m}</li>
                                 ))}
                               </ul>
                             </div>
