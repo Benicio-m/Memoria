@@ -321,7 +321,7 @@ function Home() {
                             ))}
 
                           {allGroups.filter(g => String(g.roomId) === String(r._id)).length === 0 && (
-                            <p className="ml-4 text-base opacity-70">Nenhum grupo nesta sala ainda.</p>
+                            <p className="ml-4 text-base opacity-70 font-konkhmer-sleokchher">Nenhum grupo nesta sala ainda.</p>
                           )}
                           <div className="items-center justify-end gap-2">
                             <Button className="w-25 h-10 mt-2 bg-amber-600 hover:bg-amber-700 text-accent-foreground rounded-md text-base sm:text-lg font-konkhmer-sleokchher" onClick={() => setOpeni(!openi)}>Ok</Button>
