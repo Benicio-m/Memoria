@@ -277,7 +277,7 @@ function Home() {
               </div>
               <div className="flex flex-1 flex-col w-full items-start justify-start ml-8! shadow-accent-foreground font-konkhmer-sleokchher font-400 font-normal p-0">
                 {gottenRooms.map(r => (
-                  <div className="flex flex-1 flex-row w-full items-center justify-center shadow-accent-foreground font-konkhmer-sleokchher font-400 font-normal p-0">
+                  <div className="flex flex-1 flex-row w-full items-center justify-center shadow-accent-foreground font-konkhmer-sleokchher font-400 font-normal p-0" key={r._id || r.id}>
                     <div className="w-4xl items-start justify-center font-konkhmer-sleokchher font-400 font-normal p-0">
                       <h2 className="text-start text-xl">{r.name}</h2>
                     </div>
@@ -288,12 +288,12 @@ function Home() {
                           <DialogTitle className="font-konkhmer-sleokchher text-2xl">Informações da sala</DialogTitle>
                           <h2 className="font-konkhmer-sleokchher text-start text-xl">Código: {r.code}</h2>
                           <h2 className="font-konkhmer-sleokchher text-start text-xl">Grupos pendentes:</h2>
-                            {pendingGroups.filter(gr => gr.roomId === r._id).map(g => (
+                            {pendingGroups.filter(gr => gr.id === r.id).map(g => (
                               <div className="flex flex-row items-center justify-start w-full max-w-2.5xl p-2 sm:p-3 m-0 font-konkhmer-sleokchher">
                                 <h2 className="text-center text-lg whitespace-nowrap">{g.name}</h2>
                                 <div className="flex w-full items-center justify-end place-content-start gap-2">
-                                  <Button className="w-8 h-8 bg-transparent hover:bg-border text-accent-foreground rounded-md text-base sm:text-lg" onClick={() => handleAutorizar(r.id, g.id, 'autorizado')}><CheckIcon /></Button>
-                                  <Button className="w-8 h-8 bg-transparent hover:bg-border text-accent-foreground rounded-md text-base sm:text-lg" onClick={() => handleAutorizar(r.id, g.id, 'recusado')}><XIcon /></Button>
+                                  <Button className="w-8 h-8 bg-transparent hover:bg-border text-accent-foreground rounded-md text-base sm:text-lg" onClick={() => handleAutorizar(r._id, g._id, 'autorizado')}><CheckIcon /></Button>
+                                  <Button className="w-8 h-8 bg-transparent hover:bg-border text-accent-foreground rounded-md text-base sm:text-lg" onClick={() => handleAutorizar(r._id, g._id, 'recusado')}><XIcon /></Button>
                                 </div>
                               </div>
                             ))}
