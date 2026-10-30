@@ -26,8 +26,8 @@ function Home() {
   };
   const [user, setUser] = useState<User | null>(null);
   async function handleAutorizar(salaId: string, grupoId: string, status: 'autorizado' | 'recusado') {
-    if (!user?.id) {
-      setError("Usuário não autenticado.");
+    if (!salaId || !grupoId) {
+      setError("IDs da sala ou do grupo não encontrados.");
       return;
     }
 
@@ -40,21 +40,23 @@ function Home() {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-          body: JSON.stringify({
-            status,
-            criadorId: user.id,
-          }),
+          body: JSON.stringify({ status }),
         }
       );
 
-      const data = await res.json();
+      const text = await res.text();
+      let data: any = null;
+      try {
+        data = text ? JSON.parse(text) : null;
+      } catch {
+        setError("Resposta inválida do servidor.");
+        return;
+      }
 
-      if (res.ok && data.ok) {
-        // atualiza a lista de pendentes na tela
-        setPendingGroups(prev => prev.filter(g => g.id !== grupoId));
-        alert(`Grupo ${status === 'autorizado' ? 'autorizado' : 'recusado'} com sucesso.`);
+      if (res.ok && data?.ok) {
+        setPendingGroups(prev => prev.filter(g => g._id !== grupoId));
       } else {
-        setError(data.error || "Erro ao atualizar status do grupo.");
+        setError(data?.error || "Erro ao atualizar status do grupo.");
       }
     } catch (err) {
       console.error("Erro ao autorizar/recusar:", err);
