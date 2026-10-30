@@ -23,6 +23,10 @@ function Write() {
     setLoading(true);
 
     try {
+      if(!code || !name || !code && !name) {
+        alert("Preencha todos os campos")
+        return
+      }
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/rooms/join`,
         {
