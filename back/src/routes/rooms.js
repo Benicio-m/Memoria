@@ -379,7 +379,7 @@ rooms.post("/", authMiddleware, async (c) => {
 // Listar salas abertas do professor logado
 rooms.get("/open", authMiddleware, async (c) => {
   try {
-    await conectarMongo()
+    await conectarMongo();
     const user = c.get("user");
 
     if (user.role !== "professor") {
@@ -395,9 +395,19 @@ rooms.get("/open", authMiddleware, async (c) => {
       .sort({ createdAt: -1 })
       .select("name code createdAt");
 
+    // Busca todos os grupos das salas do professor
+    const roomIds = rooms.map((r) => r._id);
+
+    const groups = await Group.find({
+      roomId: { $in: roomIds },
+    })
+      .sort({ createdAt: -1 })
+      .select("name members roomId status createdAt");
+
     return c.json({
       ok: true,
       rooms,
+      groups,
     });
   } catch (err) {
     console.error("Erro ao listar salas abertas:", err);

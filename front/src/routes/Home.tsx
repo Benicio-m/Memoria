@@ -25,6 +25,7 @@ function Home() {
     roomId?: string;
   };
   const [user, setUser] = useState<User | null>(null);
+  const [allGroups, setAllGroups] = useState<any[]>([]);
   async function handleAutorizar(salaId: string, grupoId: string, status: 'autorizado' | 'recusado') {
     if (!salaId || !grupoId) {
       setError("IDs da sala ou do grupo não encontrados.");
@@ -33,7 +34,7 @@ function Home() {
 
     try {
       const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/rooms/${salaId}/groups/${grupoId}`,
+        `${import.meta.env.VITE_API_URL}/rooms/${String(salaId)}/groups/${String(grupoId)}`,
         {
           method: 'PATCH',
           headers: {
@@ -54,7 +55,11 @@ function Home() {
       }
 
       if (res.ok && data?.ok) {
-        setPendingGroups(prev => prev.filter(g => g._id !== grupoId));
+        // remove dos pendentes e atualiza o status no allGroups
+        setPendingGroups(prev => prev.filter(g => String(g._id) !== String(grupoId)));
+        setAllGroups(prev => prev.map(g =>
+          String(g._id) === String(grupoId) ? { ...g, status } : g
+        ));
       } else {
         setError(data?.error || "Erro ao atualizar status do grupo.");
       }
@@ -297,14 +302,27 @@ function Home() {
                                   <Button className="w-8 h-8 bg-transparent hover:bg-border text-accent-foreground rounded-md text-base sm:text-lg" onClick={() => handleAutorizar(r._id, g._id, 'recusado')}><XIcon /></Button>
                                 </div>
                               </div>
-                              <h2 className="font-konkhmer-sleokchher text-start text-xl">Grupos membros:</h2>
-                              <ul className="ml-4 list-disc text-base">
-                                {g.members?.map((m: string, i: number) => (
-                                  <li key={i}>{m}</li>
-                                ))}
-                              </ul>
                             </div>
                           ))}
+                          <h2 className="font-konkhmer-sleokchher text-start text-xl">Grupos membros:</h2>
+                          {allGroups
+                            .filter(g => String(g.roomId) === String(r._id))
+                            .map(g => (
+                              <div key={g._id} className="mb-2 ml-4">
+                                <h3 className="text-base">
+                                  {g.name} — {g.status}
+                                </h3>
+                                <ul className="ml-4 list-disc text-base">
+                                  {g.members?.map((m: string, i: number) => (
+                                    <li key={i}>{m}</li>
+                                  ))}
+                                </ul>
+                              </div>
+                            ))}
+
+                          {allGroups.filter(g => String(g.roomId) === String(r._id)).length === 0 && (
+                            <p className="ml-4 text-base opacity-70">Nenhum grupo nesta sala ainda.</p>
+                          )}
                           <div className="items-center justify-end gap-2">
                             <Button className="w-25 h-10 mt-2 bg-amber-600 hover:bg-amber-700 text-accent-foreground rounded-md text-base sm:text-lg font-konkhmer-sleokchher" onClick={() => setOpeni(!openi)}>Ok</Button>
                           </div>
