@@ -3,6 +3,17 @@ import { cors } from "hono/cors";
 import rooms from "./routes/rooms.js";
 import mongoose from "mongoose";
 
+const app = new Hono();
+app.use("*", async (c, next) => {
+  c.header("Access-Control-Allow-Origin", "https://jornalmemoria.vercel.app");
+  c.header("Access-Control-Allow-Methods", "GET,POST,PATCH,PUT,DELETE,OPTIONS");
+  c.header("Access-Control-Allow-Headers", "Content-Type,Authorization");
+  if (c.req.method === "OPTIONS") {
+    return c.body(null, 204);
+  }
+  await next();
+});
+
 let cached = global.mongoose;
 
 if (!cached) {
@@ -22,16 +33,7 @@ export async function conectarMongo() {
   return cached.conn;
 }
 
-const app = new Hono();
-app.use("*", async (c, next) => {
-  c.header("Access-Control-Allow-Origin", "https://jornalmemoria.vercel.app");
-  c.header("Access-Control-Allow-Methods", "GET,POST,PATCH,PUT,DELETE,OPTIONS");
-  c.header("Access-Control-Allow-Headers", "Content-Type,Authorization");
-  if (c.req.method === "OPTIONS") {
-    return c.body(null, 204);
-  }
-  await next();
-});
+
 
 app.get("/ping", (c) => c.json({ ok: true, versao: "teste-cors" }));
 app.use(
