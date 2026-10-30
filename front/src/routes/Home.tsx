@@ -308,11 +308,11 @@ function Home() {
                             <p className="ml-4 text-base opacity-70 font-konkhmer-sleokchher font-400 font-normal">Nenhum grupo pendente.</p>
                           )}
 
-                         <h2 className="font-konkhmer-sleokchher text-start text-xl">Grupos membros:</h2>
+                         <h2 className="font-konkhmer-sleokchher font-normal font-400 text-start text-xl">Grupos membros:</h2>
                           {r.groups?.filter((g: any) => g.status === 'autorizado').map((g: any) => (
                             <div key={g._id} className="mb-2 ml-4">
-                              <h3 className="text-base">{g.name}</h3>
-                              <ul className="ml-4 list-disc text-base">
+                              <h3 className="text-base font-konkhmer-sleokchher font-normal font-400">{g.name}</h3>
+                              <ul className="ml-4 list-disc text-base font-konkhmer-sleokchher font-normal font-400">
                                 {g.members?.length
                                   ? g.members.map((m: string, i: number) => <li key={i}>{m}</li>)
                                   : g.name.split(",").map((m: string, i: number) => <li key={i}>{m.trim()}</li>)
