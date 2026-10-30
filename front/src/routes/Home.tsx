@@ -190,7 +190,7 @@ function Home() {
 
       try {
         const response = await fetch(
-          `http://localhost:8787/rooms/me`,
+          `${import.meta.env.VITE_API_URL}/rooms/me`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
