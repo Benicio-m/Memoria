@@ -308,10 +308,10 @@ function Home() {
                             <p className="ml-4 text-base opacity-70 font-konkhmer-sleokchher font-400 font-normal">Nenhum grupo pendente.</p>
                           )}
 
-                          <h2 className="font-konkhmer-sleokchher text-start text-xl">Grupos membros:</h2>
-                          {r.groups?.map((g: any) => (
+                         <h2 className="font-konkhmer-sleokchher text-start text-xl">Grupos membros:</h2>
+                          {r.groups?.filter((g: any) => g.status === 'autorizado').map((g: any) => (
                             <div key={g._id} className="mb-2 ml-4">
-                              <h3 className="text-base">{g.name} — {g.status}</h3>
+                              <h3 className="text-base">{g.name}</h3>
                               <ul className="ml-4 list-disc text-base">
                                 {g.members?.length
                                   ? g.members.map((m: string, i: number) => <li key={i}>{m}</li>)
@@ -320,10 +320,9 @@ function Home() {
                               </ul>
                             </div>
                           ))}
-                          {r.groups?.length === 0 && (
-                            <p className="ml-4 text-base opacity-70 font-konkhmer-sleokchher font-400 font-normal">Nenhum grupo nesta sala ainda.</p>
+                          {r.groups?.filter((g: any) => g.status === 'autorizado').length === 0 && (
+                            <p className="ml-4 text-base opacity-70 font-konkhmer-sleokchher font-400 font-normal">Nenhum grupo autorizado ainda.</p>
                           )}
-
                           <div className="items-center justify-end gap-2">
                             <Button className="w-25 h-10 mt-2 bg-amber-600 hover:bg-amber-700 text-accent-foreground rounded-md text-base sm:text-lg font-konkhmer-sleokchher" onClick={() => setOpeni(!openi)}>Ok</Button>
                           </div>
