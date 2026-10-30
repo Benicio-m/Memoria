@@ -10,7 +10,7 @@ import News from "../../models/News.js";
 
 const rooms = new Hono();
 const resend = new Resend(process.env.RESEND_API_KEY);
-// Rotas:
+// Rotas: 
 // Login do professor
 rooms.post("/write", async (c) => {
   try {
