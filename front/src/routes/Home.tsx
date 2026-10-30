@@ -25,6 +25,42 @@ function Home() {
     roomId?: string;
   };
   const [user, setUser] = useState<User | null>(null);
+  async function handleAutorizar(salaId: string, grupoId: string, status: 'aprovado' | 'recusado') {
+    if (!user?.id) {
+      setError("Usuário não autenticado.");
+      return;
+    }
+
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/rooms/${salaId}/alunos/${grupoId}`,
+        {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({
+            status,
+            criadorId: user.id,
+          }),
+        }
+      );
+
+      const data = await res.json();
+
+      if (res.ok && data.ok) {
+        // atualiza a lista de pendentes na tela
+        setPendingGroups(prev => prev.filter(g => g.id !== grupoId));
+        alert(`Grupo ${status === 'aprovado' ? 'autorizado' : 'recusado'} com sucesso.`);
+      } else {
+        setError(data.error || "Erro ao atualizar status do grupo.");
+      }
+    } catch (err) {
+      console.error("Erro ao autorizar/recusar:", err);
+      setError("Erro de conexão ao atualizar status.");
+    }
+  }
   function getLoggedUser(): User | null {
     const stored = localStorage.getItem("user");
 
@@ -254,8 +290,8 @@ function Home() {
                               <div className="flex flex-row items-center justify-start w-full max-w-2.5xl p-2 sm:p-3 m-0 font-konkhmer-sleokchher">
                                 <h2 className="text-center text-lg whitespace-nowrap">{g.name}</h2>
                                 <div className="flex w-full items-center justify-end place-content-start gap-2">
-                                  <Button className="w-8 h-8 bg-transparent hover:bg-border text-accent-foreground rounded-md text-base sm:text-lg"><CheckIcon /></Button>
-                                  <Button className="w-8 h-8 bg-transparent hover:bg-border text-accent-foreground rounded-md text-base sm:text-lg"><XIcon /></Button>
+                                  <Button className="w-8 h-8 bg-transparent hover:bg-border text-accent-foreground rounded-md text-base sm:text-lg" onClick={() => handleAutorizar(r.id, g.id, 'aprovado')}><CheckIcon /></Button>
+                                  <Button className="w-8 h-8 bg-transparent hover:bg-border text-accent-foreground rounded-md text-base sm:text-lg" onClick={() => handleAutorizar(r.id, g.id, 'recusado')}><XIcon /></Button>
                                 </div>
                               </div>
                             ))}

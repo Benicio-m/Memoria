@@ -210,36 +210,40 @@ rooms.post("/join", async (c) => {
   }
 });
 
-rooms.post("/groups/:groupId/authorize", async (c) => {
-  const groupId = c.req.param("groupId");
+// PATCH /api/salas/:id/alunos/:alunoId
+router.patch('/:id/alunos/:alunoId', async (req, res) => {
+  try {
+    const { id, alunoId } = req.params;
+    const { status, criadorId } = req.body;
 
-  const group = await Group.findByIdAndUpdate(
-    groupId,
-    { status: "autorizado" },
-    { new: true }
-  );
+    // valida o status
+    if (!['aprovado', 'recusado'].includes(status)) {
+      return res.status(400).json({ error: 'Status inválido. Use "aprovado" ou "recusado".' });
+    }
 
-  if (!group) {
-    return c.json({ error: "Grupo não encontrado" }, 404);
+    const sala = await Sala.findById(id);
+    if (!sala) {
+      return res.status(404).json({ error: 'Sala não encontrada.' });
+    }
+
+    // só o criador da sala pode autorizar/recusar
+    if (sala.criadorId !== criadorId) {
+      return res.status(403).json({ error: 'Apenas o criador da sala pode fazer isso.' });
+    }
+
+    // encontra o aluno dentro da sala
+    const aluno = sala.alunos.find(a => a.alunoId === alunoId);
+    if (!aluno) {
+      return res.status(404).json({ error: 'Aluno não encontrado nesta sala.' });
+    }
+
+    aluno.status = status;
+    await sala.save();
+
+    res.json({ message: `Aluno ${status} com sucesso.`, sala });
+  } catch (err) {
+    res.status(500).json({ error: 'Erro ao atualizar status do aluno.', detalhe: err.message });
   }
-
-  return c.json({ ok: true, group, message: "Grupo autorizado" });
-});
-
-rooms.post("/groups/:groupId/reject", async (c) => {
-  const groupId = c.req.param("groupId");
-
-  const group = await Group.findByIdAndUpdate(
-    groupId,
-    { status: "recusado" },
-    { new: true }
-  );
-
-  if (!group) {
-    return c.json({ error: "Grupo não encontrado" }, 404);
-  }
-
-  return c.json({ ok: true, group, message: "Grupo recusado" });
 });
 
 // Verificar professor/aluno logado
