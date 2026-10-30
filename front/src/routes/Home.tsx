@@ -264,7 +264,7 @@ function Home() {
                 </div> 
                 <Dialog open={open} onOpenChange={setOpen}>
                   <DialogTrigger className="w-10 h-10 pl-2 bg-transparent hover:bg-border text-accent-foreground text-center rounded-md sm:text-lg"><Plus /></DialogTrigger>
-                  <DialogContent className="rounded-md">
+                  <DialogContent className="rounded-md max-h-auto">
                     <DialogHeader>
                       <DialogTitle className="font-konkhmer-sleokchher text-2xl">Criar</DialogTitle>
                       <Input placeholder="Nome da sala" className="font-konkhmer-sleokchher rounded-md" onChange={(e) => setRoomName(e.target.value)}/>
