@@ -8,8 +8,8 @@ const app = new Hono();
 app.use(
   "*",
   cors({
-    origin: process.env.FRONTEND_URL,
-    allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    origin: "https://jornalmemoria.vercel.app",
+    allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowHeaders: ["Content-Type", "Authorization"],
     credentials: true,
   })
