@@ -27,21 +27,19 @@ function Write() {
         alert("Preencha todos os campos")
         return
       }
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/rooms/join`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ code, name }),
-        }
-      );
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/rooms/join`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          code: code,
+          name: name, // ex.: "João, Maria, Pedro"
+        }),
+      });
 
-      const text = await response.text();
+      const text = await res.text();
       const data = text ? JSON.parse(text) : {};
 
-      if (!response.ok || !data.ok) {
+      if (!res.ok || !data.ok) {
         setError(data.error || "Erro ao entrar na sala");
         return;
       }

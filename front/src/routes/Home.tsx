@@ -305,20 +305,17 @@ function Home() {
                             </div>
                           ))}
                           <h2 className="font-konkhmer-sleokchher text-start text-xl">Grupos membros:</h2>
-                          {allGroups
-                            .filter(g => String(g.roomId) === String(r._id))
-                            .map(g => (
-                              <div key={g._id} className="mb-2 ml-4">
-                                <h3 className="text-base">
-                                  {g.name} — {g.status}
-                                </h3>
-                                <ul className="ml-4 list-disc text-base">
-                                  {g.members?.map((m: string, i: number) => (
-                                    <li key={i}>{m}</li>
-                                  ))}
-                                </ul>
-                              </div>
-                            ))}
+                          {allGroups.filter(g => String(g.roomId) === String(r._id)).map(g => (
+                            <div key={g._id} className="mb-2 ml-4">
+                              <h3 className="text-base">{g.name}</h3>
+                              <ul className="ml-4 list-disc text-base">
+                                {g.members?.length
+                                  ? g.members.map((m: string, i: number) => <li key={i}>{m}</li>)
+                                  : g.name.split(",").map((m: string, i: number) => <li key={i}>{m.trim()}</li>)
+                                }
+                              </ul>
+                            </div>
+                          ))}
 
                           {allGroups.filter(g => String(g.roomId) === String(r._id)).length === 0 && (
                             <p className="ml-4 text-base opacity-70 font-konkhmer-sleokchher font-400 font-normal">Nenhum grupo nesta sala ainda.</p>

@@ -114,17 +114,16 @@ rooms.get("/groups/pending", authMiddleware, async (c) => {
 });
 
 // Grupo entra na sala com código + nomes dos integrantes
+// Grupo entra na sala com código + nomes dos integrantes
 rooms.post("/join", async (c) => {
   try {
-    await conectarMongo()
-    const { code, name } = await c.req.json();
+    await conectarMongo();
+
+    const { code, name, members } = await c.req.json();
 
     if (!code || !name) {
       return c.json(
-        {
-          error:
-            "Informe o código da sala e os nomes dos integrantes",
-        },
+        { error: "Informe o código da sala e o nome do grupo" },
         400
       );
     }
@@ -139,6 +138,11 @@ rooms.post("/join", async (c) => {
 
     const groupName = name.trim();
 
+    // Aceita members como string "João, Maria" ou array ["João", "Maria"]
+    const memberList = Array.isArray(members)
+      ? members.map((m) => String(m).trim()).filter(Boolean)
+      : (members || "").split(",").map((m) => m.trim()).filter(Boolean);
+
     let group = await Group.findOne({
       roomId: room._id,
       name: groupName,
@@ -148,10 +152,7 @@ rooms.post("/join", async (c) => {
       group = await Group.create({
         roomId: room._id,
         name: groupName,
-        members: groupName
-          .split(",")
-          .map((m) => m.trim())
-          .filter(Boolean),
+        members: memberList,
         status: "pendente",
       });
 
@@ -160,16 +161,20 @@ rooms.post("/join", async (c) => {
       });
 
       for (const teacher of teachers) {
-        await resend.emails.send({
-          from: process.env.EMAIL_FROM,
-          to: teacher.email,
-          subject: "Novo grupo aguardando autorização",
-          html: `
-            <p>O grupo <strong>${group.name}</strong> solicitou acesso à sala <strong>${room.name}</strong>.</p>
-            <p>Integrantes: ${group.members.join(", ")}</p>
-            <p>Acesse o painel para autorizar ou recusar.</p>
-          `,
-        });
+        try {
+          await resend.emails.send({
+            from: process.env.EMAIL_FROM,
+            to: teacher.email,
+            subject: "Novo grupo aguardando autorização",
+            html: `
+              <p>O grupo <strong>${group.name}</strong> solicitou acesso à sala <strong>${room.name}</strong>.</p>
+              <p>Integrantes: ${group.members.join(", ") || "não informados"}</p>
+              <p>Acesse o painel para autorizar ou recusar.</p>
+            `,
+          });
+        } catch (emailErr) {
+          console.error("Erro ao enviar e-mail:", emailErr);
+        }
       }
     }
 
