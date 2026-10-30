@@ -6,3 +6,5 @@ export const POST = handle(app);
 export const PATCH = handle(app);
 export const PUT = handle(app);
 export const DELETE = handle(app);
+export const OPTIONS = handle(app);   // ← esta linha resolve o preflight
+export const HEAD = handle(app);
