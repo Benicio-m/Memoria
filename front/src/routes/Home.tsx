@@ -288,15 +288,21 @@ function Home() {
                           <DialogTitle className="font-konkhmer-sleokchher text-2xl">Informações da sala</DialogTitle>
                           <h2 className="font-konkhmer-sleokchher text-start text-xl">Código: {r.code}</h2>
                           <h2 className="font-konkhmer-sleokchher text-start text-xl">Grupos pendentes:</h2>
-                            {pendingGroups.filter(gr => gr.id === r.id).map(g => (
-                              <div className="flex flex-row items-center justify-start w-full max-w-2.5xl p-2 sm:p-3 m-0 font-konkhmer-sleokchher">
-                                <h2 className="text-center text-lg whitespace-nowrap">{g.name}</h2>
-                                <div className="flex w-full items-center justify-end place-content-start gap-2">
-                                  <Button className="w-8 h-8 bg-transparent hover:bg-border text-accent-foreground rounded-md text-base sm:text-lg" onClick={() => handleAutorizar(r._id, g._id, 'autorizado')}><CheckIcon /></Button>
-                                  <Button className="w-8 h-8 bg-transparent hover:bg-border text-accent-foreground rounded-md text-base sm:text-lg" onClick={() => handleAutorizar(r._id, g._id, 'recusado')}><XIcon /></Button>
-                                </div>
+                          {pendingGroups.filter(gr => gr.id === r.id).map(g => (
+                            <div className="flex flex-row items-center justify-start w-full max-w-2.5xl p-2 sm:p-3 m-0 font-konkhmer-sleokchher">
+                              <h2 className="text-center text-lg whitespace-nowrap">{g.name}</h2>
+                              <div className="flex w-full items-center justify-end place-content-start gap-2">
+                                <Button className="w-8 h-8 bg-transparent hover:bg-border text-accent-foreground rounded-md text-base sm:text-lg" onClick={() => handleAutorizar(r._id, g._id, 'autorizado')}><CheckIcon /></Button>
+                                <Button className="w-8 h-8 bg-transparent hover:bg-border text-accent-foreground rounded-md text-base sm:text-lg" onClick={() => handleAutorizar(r._id, g._id, 'recusado')}><XIcon /></Button>
                               </div>
-                            ))}
+                              <h2 className="font-konkhmer-sleokchher text-start text-xl">Grupos membros:</h2>
+                              <ul className="ml-4 list-disc text-base">
+                                {g.members?.map((m: string, i: number) => (
+                                  <li kei={i}>{m}</li>
+                                ))}
+                              </ul>
+                            </div>
+                          ))}
                           <div className="items-center justify-end gap-2">
                             <Button className="w-25 h-10 mt-2 bg-amber-600 hover:bg-amber-700 text-accent-foreground rounded-md text-base sm:text-lg font-konkhmer-sleokchher" onClick={() => setOpeni(!openi)}>Ok</Button>
                           </div>
