@@ -382,25 +382,35 @@ rooms.post("/", authMiddleware, async (c) => {
 });
 
 // Listar salas abertas do professor logado
-app.get("/rooms/open", async (c) => {
-  const user = await getAuthUser(c);
-  if (!user) return c.json({ ok: false, error: "Não autorizado" }, 401);
+// Listar salas abertas do professor logado (com grupos e membros)
+rooms.get("/open", authMiddleware, async (c) => {
+  try {
+    await conectarMongo();
+    const user = c.get("user");
 
-  const rooms = await Room.find({ teachers: user.sub })
-    .sort({ createdAt: -1 })
-    .select("name code createdAt")
-    .lean();
+    if (user.role !== "professor") {
+      return c.json({ ok: false, error: "Acesso restrito a professores" }, 403);
+    }
 
-  const groups = await Group.find({ roomId: { $in: rooms.map(r => r._id) } })
-    .select("name members roomId status createdAt")
-    .lean();
+    const salas = await Room.find({ teachers: user.sub })
+      .sort({ createdAt: -1 })
+      .select("name code createdAt")
+      .lean();
 
-  const roomsWithGroups = rooms.map(r => ({
-    ...r,
-    groups: groups.filter(g => String(g.roomId) === String(r._id)),
-  }));
+    const groups = await Group.find({ roomId: { $in: salas.map(r => r._id) } })
+      .select("name members roomId status createdAt")
+      .lean();
 
-  return c.json({ ok: true, rooms: roomsWithGroups });
+    const salasComGrupos = salas.map(r => ({
+      ...r,
+      groups: groups.filter(g => String(g.roomId) === String(r._id)),
+    }));
+
+    return c.json({ ok: true, rooms: salasComGrupos });
+  } catch (err) {
+    console.error("Erro no /rooms/open:", err);
+    return c.json({ ok: false, error: "Erro ao listar salas" }, 500);
+  }
 });
 
 export default rooms;
