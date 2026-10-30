@@ -382,45 +382,25 @@ rooms.post("/", authMiddleware, async (c) => {
 });
 
 // Listar salas abertas do professor logado
-rooms.get("/open", authMiddleware, async (c) => {
-  try {
-    await conectarMongo();
-    const user = c.get("user");
+app.get("/rooms/open", async (c) => {
+  const user = await getAuthUser(c);
+  if (!user) return c.json({ ok: false, error: "Não autorizado" }, 401);
 
-    if (user.role !== "professor") {
-      return c.json(
-        { error: "Acesso restrito a professores" },
-        403
-      );
-    }
+  const rooms = await Room.find({ teachers: user.sub })
+    .sort({ createdAt: -1 })
+    .select("name code createdAt")
+    .lean();
 
-    const rooms = await Room.find({
-      teachers: user.sub,
-    })
-      .sort({ createdAt: -1 })
-      .select("name code createdAt");
+  const groups = await Group.find({ roomId: { $in: rooms.map(r => r._id) } })
+    .select("name members roomId status createdAt")
+    .lean();
 
-    // Busca todos os grupos das salas do professor
-    const roomIds = rooms.map((r) => r._id);
+  const roomsWithGroups = rooms.map(r => ({
+    ...r,
+    groups: groups.filter(g => String(g.roomId) === String(r._id)),
+  }));
 
-    const groups = await Group.find({
-      roomId: { $in: roomIds },
-    })
-      .sort({ createdAt: -1 })
-      .select("name members roomId status createdAt");
-
-    return c.json({
-      ok: true,
-      rooms,
-      groups,
-    });
-  } catch (err) {
-    console.error("Erro ao listar salas abertas:", err);
-    return c.json(
-      { error: "Erro ao listar salas abertas" },
-      500
-    );
-  }
+  return c.json({ ok: true, rooms: roomsWithGroups });
 });
 
 export default rooms;

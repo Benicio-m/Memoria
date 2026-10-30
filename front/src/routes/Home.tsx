@@ -293,8 +293,8 @@ function Home() {
                           <DialogTitle className="font-konkhmer-sleokchher text-2xl">Informações da sala</DialogTitle>
                           <h2 className="font-konkhmer-sleokchher text-start text-xl">Código: {r.code}</h2>
                           <h2 className="font-konkhmer-sleokchher text-start text-xl">Grupos pendentes:</h2>
-                          {pendingGroups.filter(g => String(g.roomId) === String(r._id)).map(g => (
-                            <div className="flex flex-col items-center justify-start w-full max-w-2.5xl p-2 sm:p-3 m-0 font-konkhmer-sleokchher">
+                          {r.groups?.filter((g: any) => g.status === 'pendente').map((g: any) => (
+                            <div key={g._id} className="flex flex-col items-center justify-start w-full max-w-2.5xl p-2 sm:p-3 m-0 font-konkhmer-sleokchher">
                               <div className="flex flex-row items-center justify-start w-full max-w-2.5xl p-2 sm:p-3 m-0 font-konkhmer-sleokchher">
                                 <h2 className="text-center text-lg whitespace-nowrap">{g.name}</h2>
                                 <div className="flex w-full items-center justify-end place-content-start gap-2">
@@ -304,10 +304,14 @@ function Home() {
                               </div>
                             </div>
                           ))}
+                          {r.groups?.filter((g: any) => g.status === 'pendente').length === 0 && (
+                            <p className="ml-4 text-base opacity-70 font-konkhmer-sleokchher font-400 font-normal">Nenhum grupo pendente.</p>
+                          )}
+
                           <h2 className="font-konkhmer-sleokchher text-start text-xl">Grupos membros:</h2>
-                          {allGroups.filter(g => String(g.roomId) === String(r._id)).map(g => (
+                          {r.groups?.map((g: any) => (
                             <div key={g._id} className="mb-2 ml-4">
-                              <h3 className="text-base">{g.name}</h3>
+                              <h3 className="text-base">{g.name} — {g.status}</h3>
                               <ul className="ml-4 list-disc text-base">
                                 {g.members?.length
                                   ? g.members.map((m: string, i: number) => <li key={i}>{m}</li>)
@@ -316,10 +320,10 @@ function Home() {
                               </ul>
                             </div>
                           ))}
-
-                          {allGroups.filter(g => String(g.roomId) === String(r._id)).length === 0 && (
+                          {r.groups?.length === 0 && (
                             <p className="ml-4 text-base opacity-70 font-konkhmer-sleokchher font-400 font-normal">Nenhum grupo nesta sala ainda.</p>
                           )}
+
                           <div className="items-center justify-end gap-2">
                             <Button className="w-25 h-10 mt-2 bg-amber-600 hover:bg-amber-700 text-accent-foreground rounded-md text-base sm:text-lg font-konkhmer-sleokchher" onClick={() => setOpeni(!openi)}>Ok</Button>
                           </div>
