@@ -210,39 +210,58 @@ rooms.post("/join", async (c) => {
   }
 });
 
-// PATCH /api/salas/:id/alunos/:alunoId
-router.patch('/:id/alunos/:alunoId', authMiddleware, async (req, res) => {
+// Autorizar ou recusar grupo em uma sala
+// PATCH /rooms/:roomId/groups/:groupId
+rooms.patch("/:roomId/groups/:groupId", authMiddleware, async (c) => {
   try {
-    const { id, alunoId } = req.params;
-    const { status, criadorId } = req.body;
+    const user = c.get("user");
+    const { roomId, groupId } = c.req.param();
+    const { status } = await c.req.json();
 
-    // valida o status
-    if (!['aprovado', 'recusado'].includes(status)) {
-      return res.status(400).json({ error: 'Status inválido. Use "aprovado" ou "recusado".' });
+    if (user.role !== "professor") {
+      return c.json({ error: "Acesso restrito a professores" }, 403);
     }
 
-    const sala = await Sala.findById(id);
-    if (!sala) {
-      return res.status(404).json({ error: 'Sala não encontrada.' });
+    if (!["autorizado", "recusado"].includes(status)) {
+      return c.json(
+        { error: 'Status inválido. Use "autorizado" ou "recusado".' },
+        400
+      );
     }
 
-    // só o criador da sala pode autorizar/recusar
-    if (sala.criadorId !== criadorId) {
-      return res.status(403).json({ error: 'Apenas o criador da sala pode fazer isso.' });
+    // confirma que a sala pertence ao professor logado
+    const room = await Room.findOne({
+      _id: roomId,
+      teachers: user.sub,
+    });
+
+    if (!room) {
+      return c.json(
+        { error: "Sala não encontrada ou você não tem acesso." },
+        404
+      );
     }
 
-    // encontra o aluno dentro da sala
-    const aluno = sala.alunos.find(a => a.alunoId === alunoId);
-    if (!aluno) {
-      return res.status(404).json({ error: 'Aluno não encontrado nesta sala.' });
+    const group = await Group.findOne({
+      _id: groupId,
+      roomId: room._id,
+    });
+
+    if (!group) {
+      return c.json({ error: "Grupo não encontrado nesta sala." }, 404);
     }
 
-    aluno.status = status;
-    await sala.save();
+    group.status = status;
+    await group.save();
 
-    res.json({ message: `Aluno ${status} com sucesso.`, sala });
+    return c.json({
+      ok: true,
+      message: `Grupo ${status} com sucesso.`,
+      group,
+    });
   } catch (err) {
-    res.status(500).json({ error: 'Erro ao atualizar status do aluno.', detalhe: err.message });
+    console.error("Erro ao autorizar/recusar grupo:", err);
+    return c.json({ error: "Erro ao atualizar status do grupo." }, 500);
   }
 });
 
