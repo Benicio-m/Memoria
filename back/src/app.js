@@ -15,11 +15,11 @@ app.use(
   })
 );
 
+app.route("/rooms", rooms);
+
 app.get("/", (c) => {
   return c.json({ ok: true, message: "API funcionando" });
 });
-
-app.route("/rooms", rooms);
 
 // Conexão reutilizável com o MongoDB (importante em serverless)
 let cached = global.mongoose;
