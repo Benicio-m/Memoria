@@ -311,7 +311,6 @@ function Home() {
                          <h2 className="font-konkhmer-sleokchher font-normal font-400 text-start text-xl">Grupos membros:</h2>
                           {r.groups?.filter((g: any) => g.status === 'autorizado').map((g: any) => (
                             <div key={g._id} className="mb-2 ml-4">
-                              <h3 className="text-base font-konkhmer-sleokchher font-normal font-400">{g.name}</h3>
                               <ul className="ml-4 list-disc text-base font-konkhmer-sleokchher font-normal font-400">
                                 {g.members?.length
                                   ? g.members.map((m: string, i: number) => <li key={i}>{m}</li>)
