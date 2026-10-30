@@ -289,11 +289,13 @@ function Home() {
                           <h2 className="font-konkhmer-sleokchher text-start text-xl">Código: {r.code}</h2>
                           <h2 className="font-konkhmer-sleokchher text-start text-xl">Grupos pendentes:</h2>
                           {pendingGroups.filter(g => String(g.roomId) === String(r._id)).map(g => (
-                            <div className="flex flex-row items-center justify-start w-full max-w-2.5xl p-2 sm:p-3 m-0 font-konkhmer-sleokchher">
-                              <h2 className="text-center text-lg whitespace-nowrap">{g.name}</h2>
-                              <div className="flex w-full items-center justify-end place-content-start gap-2">
-                                <Button className="w-8 h-8 bg-transparent hover:bg-border text-accent-foreground rounded-md text-base sm:text-lg" onClick={() => handleAutorizar(r._id, g._id, 'autorizado')}><CheckIcon /></Button>
-                                <Button className="w-8 h-8 bg-transparent hover:bg-border text-accent-foreground rounded-md text-base sm:text-lg" onClick={() => handleAutorizar(r._id, g._id, 'recusado')}><XIcon /></Button>
+                            <div className="flex flex-col items-center justify-start w-full max-w-2.5xl p-2 sm:p-3 m-0 font-konkhmer-sleokchher">
+                              <div className="flex flex-row items-center justify-start w-full max-w-2.5xl p-2 sm:p-3 m-0 font-konkhmer-sleokchher">
+                                <h2 className="text-center text-lg whitespace-nowrap">{g.name}</h2>
+                                <div className="flex w-full items-center justify-end place-content-start gap-2">
+                                  <Button className="w-8 h-8 bg-transparent hover:bg-border text-accent-foreground rounded-md text-base sm:text-lg" onClick={() => handleAutorizar(r._id, g._id, 'autorizado')}><CheckIcon /></Button>
+                                  <Button className="w-8 h-8 bg-transparent hover:bg-border text-accent-foreground rounded-md text-base sm:text-lg" onClick={() => handleAutorizar(r._id, g._id, 'recusado')}><XIcon /></Button>
+                                </div>
                               </div>
                               <h2 className="font-konkhmer-sleokchher text-start text-xl">Grupos membros:</h2>
                               <ul className="ml-4 list-disc text-base">
