@@ -211,7 +211,7 @@ rooms.post("/join", async (c) => {
 });
 
 // PATCH /api/salas/:id/alunos/:alunoId
-router.patch('/:id/alunos/:alunoId', async (req, res) => {
+router.patch('/:id/alunos/:alunoId', authMiddleware, async (req, res) => {
   try {
     const { id, alunoId } = req.params;
     const { status, criadorId } = req.body;
@@ -348,83 +348,6 @@ rooms.post("/", authMiddleware, async (c) => {
   } catch (err) {
     console.error("Erro ao criar sala:", err);
     return c.json({ error: "Erro ao criar sala" }, 500);
-  }
-});
-
-rooms.post("/:roomId/articles", authMiddleware, async (c) => {
-  try {
-    const roomId = c.req.param("roomId");
-    const { title, content } = await c.req.json();
-
-    const user = c.get("user");
-
-    if (user.role !== "aluno") {
-      return c.json({ error: "Apenas alunos podem criar notícias" }, 403);
-    }
-
-    if (user.roomId !== roomId) {
-      return c.json({ error: "Aluno não pertence a esta sala" }, 403);
-    }
-
-    if (!title || !content) {
-      return c.json(
-        { error: "Título e conteúdo são obrigatórios" },
-        400
-      );
-    }
-
-    const news = await News.create({
-      roomId,
-      groupId: user.sub,
-      title,
-      content,
-    });
-
-    return c.json({
-      ok: true,
-      news,
-    });
-  } catch (err) {
-    console.error("Erro ao criar notícia:", err);
-    return c.json({ error: "Erro ao criar notícia" }, 500);
-  }
-});
-
-rooms.put("/articles/:articleId", authMiddleware, async (c) => {
-  try {
-    const articleId = c.req.param("articleId");
-    const { title, content } = await c.req.json();
-
-    const user = c.get("user");
-
-    if (user.role !== "aluno") {
-      return c.json({ error: "Apenas alunos podem editar notícias" }, 403);
-    }
-
-    const news = await News.findOne({
-      _id: articleId,
-      groupId: user.sub,
-    });
-
-    if (!news) {
-      return c.json(
-        { error: "Notícia não encontrada ou não pertence a você" },
-        404
-      );
-    }
-
-    news.title = title ?? news.title;
-    news.content = content ?? news.content;
-
-    await news.save();
-
-    return c.json({
-      ok: true,
-      news,
-    });
-  } catch (err) {
-    console.error("Erro ao editar notícia:", err);
-    return c.json({ error: "Erro ao editar notícia" }, 500);
   }
 });
 
