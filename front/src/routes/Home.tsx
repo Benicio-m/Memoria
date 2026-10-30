@@ -255,7 +255,7 @@ function Home() {
             </div>
           </Card>
         </div>
-        <div className="flex flex-1 w-full items-start justify-start ml-8 sm: ml-0 bg-border font-konkhmer-sleokchher font-400 font-normal p-0">
+        <div className="flex flex-1 w-full items-start justify-start ml-8 sm:ml-0 bg-border font-konkhmer-sleokchher font-400 font-normal p-0">
           <div className="flex flex-col flex-1 w-full items-start justify-start ml-8 sm:ml-0 bg-border font-konkhmer-sleokchher font-400 font-normal p-0">
             <Card className="flex flex-col items-center justify-center shadow-accent-foreground shadow-md w-full max-w-7xl p-2 sm:p-3 m-0 rounded-md">
               <div className="flex flex-row items-center justify-end w-full max-w-2.5xl p-2 sm:p-3 m-0">
