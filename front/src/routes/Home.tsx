@@ -42,7 +42,7 @@ function Home() {
     const token = localStorage.getItem("token")
     if(token) {
       try {
-        await fetch("http://localhost:8787/rooms/logout", {
+        await fetch(`${import.meta.env.VITE_API_URL}/rooms/logout`, {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`
@@ -61,7 +61,7 @@ function Home() {
     if(!usr?.id) {
       return;
     }
-    const response = await fetch(`http://localhost:8787/rooms`, {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/rooms`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -84,7 +84,7 @@ function Home() {
   useEffect(() => {
     async function pegarSalas() {
       const token = localStorage.getItem("token")
-      const rooms = await fetch("http://localhost:8787/rooms/open", {
+      const rooms = await fetch(`${import.meta.env.VITE_API_URL}/rooms/open`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -102,7 +102,7 @@ function Home() {
 
       try {
         const response = await fetch(
-          "http://localhost:8787/rooms/groups/pending",
+          `${import.meta.env.VITE_API_URL}/rooms/groups/pending`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

@@ -17,7 +17,6 @@ function Write() {
   const [tipoLogin, setTipoLogin] = useState<"professor" | "aluno">("professor")
   const [code, setCode] = useState("")
   const [name, setName] = useState("")
-  const [waiting, setWaiting] = useState(false)
   async function handleAlunoLogin(e: React.FormEvent) {
     e.preventDefault();
     setError("");
@@ -25,7 +24,7 @@ function Write() {
 
     try {
       const response = await fetch(
-        `http://localhost:8787/rooms/join`,
+        `${import.meta.env.VITE_API_URL}/rooms/join`,
         {
           method: "POST",
           headers: {
@@ -73,7 +72,7 @@ function Write() {
 
     try {
       const response = await fetch(
-        `http://localhost:8787/rooms/write`,
+        `${import.meta.env.VITE_API_URL}/rooms/write`,
         {
           method: "POST",
           headers: {
@@ -122,7 +121,7 @@ function Write() {
 
       try {
         const response = await fetch(
-          `http://localhost:8787/rooms/me`,
+          `${import.meta.env.VITE_API_URL}/rooms/me`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
