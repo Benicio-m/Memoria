@@ -7,13 +7,14 @@ import Teacher from "../../models/Teacher.js";
 import Room from "../../models/Room.js";
 import Group from "../../models/Group.js";
 import News from "../../models/News.js";
-
+import { conectarMongo } from "../app.js";
 const rooms = new Hono();
 const resend = new Resend(process.env.RESEND_API_KEY);
 // Rotas: 
 // Login do professor
 rooms.post("/write", async (c) => {
   try {
+    await conectarMongo()
     const { email, password } = await c.req.json();
 
     if (!email || !password) {
