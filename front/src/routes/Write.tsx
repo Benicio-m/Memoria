@@ -218,8 +218,8 @@ function Write() {
               </TabsContent>
               <TabsContent value="sala" className="flex flex-col w-full h-full">
                 <h1 className="text-lg sm:text-xl md:text-2xl text-center">Logue com o código da sala para poder escrever</h1>
-                <Input className="w-full h-9 mt-2" placeholder="Código da sala" />
-                <Input className="w-full h-9 mt-2" placeholder="Seu nome completo"/>
+                <Input className="w-full h-9 mt-2" placeholder="Código da sala" onChange={(e) => setCode(e.target.value)}/>
+                <Input className="w-full h-9 mt-2" placeholder="Seu nome completo" onChange={(e) => setName(e.target.value)}/>
                 <Button className="w-full h-10 mt-2 bg-amber-600 hover:bg-amber-700 text-accent-foreground rounded-md text-base sm:text-lg" onClick={handleAlunoLogin}>Entrar</Button>
               </TabsContent>
             </Tabs>
