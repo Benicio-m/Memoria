@@ -5,18 +5,7 @@ import rooms from "./routes/rooms.js";
 
 const app = new Hono();
 
-app.use(
-  "*",
-  cors({
-    origin: [
-      "https://jornalmemoria.vercel.app",
-      "http://localhost:5173",
-    ],
-    allowMethods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
-    allowHeaders: ["Content-Type", "Authorization"],
-    credentials: true,
-  })
-);
+app.use('/*', cors());
 
 app.route("/rooms", rooms);
 
