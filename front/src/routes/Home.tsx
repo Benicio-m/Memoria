@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Input } from '@/components/ui/input';
 import { CheckIcon, Plus, XIcon } from 'lucide-react';
-import { Avatar, AvatarBadge, AvatarFallback, AvatarImage } from '../components/ui/avatar';
+import { Avatar, AvatarImage } from '../components/ui/avatar';
 function Home() {
   const navigate = useNavigate();
   const [error, setError] = useState("")

@@ -1,4 +1,5 @@
 import { Card } from "@/components/ui/card";
+import { Carousel, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { FacebookLogoIcon, InstagramLogoIcon } from "@phosphor-icons/react";
 
@@ -33,7 +34,11 @@ function News() {
             <Card className="flex flex-col items-center justify-center shadow-accent-foreground shadow-md w-full max-w-7xl p-2 sm:p-3 m-0 rounded-md">
                 <div className="flex flex-row items-center justify-end w-full max-w-2.5xl p-2 sm:p-3 m-0">
                     <div className="flex flex-col flex-1 w-full items-start justify-center ml-8! font-konkhmer-sleokchher font-400 font-normal p-0"> 
-                        <h1 className="text-xl text-left sm:text-2xl md:text-4xl">Últimas notícias:</h1>
+                        <h1 className="text-xl text-left sm:text-2xl md:text-4xl">Destaques:</h1>
+                        {/* <Carousel>
+                          <CarouselNext />
+                          <CarouselPrevious />
+                        </Carousel> */}
                     </div> 
                 </div> 
             </Card>

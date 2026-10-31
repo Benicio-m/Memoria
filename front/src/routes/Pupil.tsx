@@ -5,6 +5,7 @@ import { Card } from '../components/ui/card'
 import { ScrollArea } from '../components/ui/scroll-area'
 import { InstagramLogoIcon, FacebookLogoIcon } from '@phosphor-icons/react'
 import { useEffect, useState } from 'react';
+import { Plus } from 'lucide-react';
 
 function Pupil() {
   const navigate = useNavigate()
@@ -105,8 +106,9 @@ function Pupil() {
             <Card className="flex flex-col items-center justify-center shadow-accent-foreground shadow-md w-full max-w-7xl p-2 sm:p-3 m-0 rounded-md">
               <div className="flex flex-row items-center justify-end w-full max-w-2.5xl p-2 sm:p-3 m-0">
                 <div className="flex flex-col flex-1 w-full items-start justify-center ml-8! font-konkhmer-sleokchher font-400 font-normal p-0"> 
-                  <h1 className="text-xl text-left sm:text-2xl md:text-4xl">Notícias do grupo </h1>
+                  <h1 className="text-xl text-left sm:text-2xl md:text-4xl">Matérias do grupo:</h1>
                 </div>
+                <a className="w-10 h-10 pl-2 bg-transparent hover:bg-border text-accent-foreground text-center rounded-md sm:text-lg"><Plus /></a>
                 <Button className="w-20 h-10 bg-green-600 hover:bg-green-700 text-accent-foreground rounded-md text-base sm:text-lg" onClick={() => logout}>Sair</Button>
               </div> 
             </Card>
