@@ -216,13 +216,13 @@ function Write() {
                 <h1 className="text-lg sm:text-xl md:text-2xl text-center">Logue com seu e-mail para poder escrever</h1>
                 <Input className="w-full h-9 mt-2" placeholder="E-mail" value={email} onChange={(e) => setEmail(e.target.value)} />
                 <Input type="password" className="w-full h-9 mt-2" placeholder="Senha" value={senha} onChange={(e) => setSenha(e.target.value)}/>
-                <Button className="w-full h-10 mt-2 bg-amber-600 hover:bg-amber-700 text-accent-foreground rounded-md text-base sm:text-lg" onClick={handleProfessorLogin}> Entrar</Button>
+                <Button className="w-full h-10 mt-2 bg-green-600 hover:bg-green-700 text-accent-foreground rounded-md text-base sm:text-lg" onClick={handleProfessorLogin}> Entrar</Button>
               </TabsContent>
               <TabsContent value="sala" className="flex flex-col w-full h-full">
                 <h1 className="text-lg sm:text-xl md:text-2xl text-center">Logue com o código da sala para poder escrever</h1>
                 <Input className="w-full h-9 mt-2" placeholder="Código da sala" onChange={(e) => setCode(e.target.value)}/>
                 <Input className="w-full h-9 mt-2" placeholder="Seu nome completo" onChange={(e) => setName(e.target.value)}/>
-                <Button className="w-full h-10 mt-2 bg-amber-600 hover:bg-amber-700 text-accent-foreground rounded-md text-base sm:text-lg" onClick={handleAlunoLogin}>Entrar</Button>
+                <Button className="w-full h-10 mt-2 bg-green-600 hover:bg-green-700 text-accent-foreground rounded-md text-base sm:text-lg" onClick={handleAlunoLogin}>Entrar</Button>
               </TabsContent>
             </Tabs>
           </Card>
