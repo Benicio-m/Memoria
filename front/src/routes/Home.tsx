@@ -333,7 +333,7 @@ function Home() {
                 ))}
                 <Avatar>
                   <AvatarImage src={user?.profilePhoto}/> 
-                  <AvatarFallback>CN</AvatarFallback>
+                  <AvatarFallback>CH</AvatarFallback>
                 </Avatar>
               </div> 
             </Card>
