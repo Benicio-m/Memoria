@@ -192,8 +192,9 @@ function Home() {
       });
       const data = await res.json();
       if (data.ok) setProfessor(data.user);
-      console.log(professor)
+      
     }
+    console.log(professor)
     pegarProfessor();
     pegarUsuariosPendentes()
     pegarSalas()
