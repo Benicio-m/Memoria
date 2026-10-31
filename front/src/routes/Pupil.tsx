@@ -31,14 +31,14 @@ function Pupil() {
             </div>
           </Card>
         </div>
-        <div className="flex flex-1 w-full items-start justify-start ml-8! bg-border font-konkhmer-sleokchher font-400 font-normal p-0">
-          <div className="flex flex-col flex-1 w-full items-start justify-start ml-8! bg-border font-konkhmer-sleokchher font-400 font-normal p-0">
+        <div className="flex flex-1 w-full items-start justify-start bg-border font-konkhmer-sleokchher font-400 font-normal p-0">
+          <div className="flex flex-col flex-1 w-full items-start justify-start bg-border font-konkhmer-sleokchher font-400 font-normal p-0">
             <Card className="flex flex-col items-center justify-center shadow-accent-foreground shadow-md w-full max-w-7xl p-2 sm:p-3 m-0 rounded-md">
               <div className="flex flex-row items-center justify-end w-full max-w-2.5xl p-2 sm:p-3 m-0">
                 <div className="flex flex-col flex-1 w-full items-start justify-center ml-8! font-konkhmer-sleokchher font-400 font-normal p-0"> 
                   <h1 className="text-xl text-left sm:text-2xl md:text-4xl">Notícias do grupo </h1>
                 </div>
-                <Button className="w-20 h-10 bg-amber-600 hover:bg-amber-700 text-accent-foreground rounded-md text-base sm:text-lg">Sair</Button>
+                <Button className="w-20 h-10 bg-green-600 hover:bg-green-700 text-accent-foreground rounded-md text-base sm:text-lg">Sair</Button>
               </div> 
             </Card>
           </div>
