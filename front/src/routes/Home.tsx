@@ -309,7 +309,7 @@ function Home() {
                             <p className="ml-4 text-base opacity-70 font-konkhmer-sleokchher font-400 font-normal">Nenhum grupo pendente.</p>
                           )}
 
-                         <h2 className="font-konkhmer-sleokchher font-normal font-400 text-start text-xl">Grupos membros:</h2>
+                        <h2 className="font-konkhmer-sleokchher font-normal font-400 text-start text-xl">Grupos membros:</h2>
                           {r.groups?.filter((g: any) => g.status === 'autorizado').map((g: any) => (
                             <div key={g._id} className="mb-2 ml-4">
                               <ul className="ml-4 list-disc text-base font-konkhmer-sleokchher font-normal font-400">
@@ -332,7 +332,7 @@ function Home() {
                   </div>
                 ))}
                 <Avatar>
-                  <AvatarImage src={user?.profilePhoto}/> 
+                  <AvatarImage src={user?.profilePhoto} alt="foto"/> 
                   <AvatarFallback>CH</AvatarFallback>
                 </Avatar>
               </div> 

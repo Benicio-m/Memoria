@@ -102,7 +102,7 @@ function Write() {
         setError(data.error || `Erro ao fazer login (${response.status})`);
         return;
       }
-
+      console.log(data.user)
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
 
