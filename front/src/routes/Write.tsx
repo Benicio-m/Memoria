@@ -188,7 +188,7 @@ function Write() {
             <div className="flex flex-col items-center justify-start h-full">
               <p className="font-konkhmer-sleokchher font-400 text-lg font-normal whitespace-nowrap">Um site:</p>
               <div className="flex flex-row items-center justify-center md:justify-start h-full gap-3 mt-2">
-                <img src="https://bit.ly/partnership-logo" className="h-10 sm:h-12 w-auto object-contain" />
+                <img src="https://i.ibb.co/C37cbVFf/image.png" className="h-10 sm:h-12 w-auto object-contain" />
                 <img src="https://bit.ly/partnership-logo-2" className="h-10 sm:h-12 w-auto object-contain" />
               </div>
             </div>
