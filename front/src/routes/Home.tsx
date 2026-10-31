@@ -187,12 +187,17 @@ function Home() {
     }
     async function pegarProfessor() {
       const token = localStorage.getItem('token');
+      console.log('TOKEN:', token);
+
       const res = await fetch(`${import.meta.env.VITE_API_URL}/rooms/me`, {
         headers: { Authorization: `Bearer ${token}` },
       });
+
+      console.log('STATUS:', res.status);
       const data = await res.json();
+      console.log('DATA:', JSON.stringify(data));
+
       if (data.ok) setProfessor(data.user);
-      
     }
     console.log("Professor: ", professor)
     pegarProfessor();
