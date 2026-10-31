@@ -303,7 +303,7 @@ rooms.get("/me", authMiddleware, async (c) => {
     }
 
     if (user.role === "aluno") {
-      const student = await Student.findById(user.sub).select(
+      const student = await Group.findById(user.sub).select(
         "name email status roomId"
       );
 
