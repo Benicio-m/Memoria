@@ -286,7 +286,7 @@ function Home() {
                     <div className="w-4xl items-start justify-center font-konkhmer-sleokchher font-400 font-normal p-0">
                       <h2 className="text-start text-xl">{r.name}</h2>
                     </div>
-                    <Dialog open={openi}>
+                    <Dialog open={openi} onOpenChange={setOpen}>
                       <DialogTrigger className="text-center text-xl rounded-md hover:bg-border width-lg! p-1">Código: {r.code}</DialogTrigger>
                       <DialogContent className="rounded-md">
                         <DialogHeader className="flex flex-col">
