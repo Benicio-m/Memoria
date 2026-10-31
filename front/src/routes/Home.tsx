@@ -219,8 +219,8 @@ function Home() {
           navigate("/aluno");
           return;
         }
-
         setUser(data.user);
+        console.log(user)
       } catch (err) {
         console.error("Erro ao verificar login:", err);
         localStorage.removeItem("token");
