@@ -61,6 +61,7 @@ rooms.post("/write", async (c) => {
         name: teacher.name,
         email: teacher.email,
         role: teacher.role,
+        profilePhoto: teacher.profilePhoto,
       },
       teachers,
     });
