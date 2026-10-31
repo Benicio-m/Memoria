@@ -194,7 +194,7 @@ function Home() {
       if (data.ok) setProfessor(data.user);
       
     }
-    console.log(professor)
+    console.log("Professor: ", professor)
     pegarProfessor();
     pegarUsuariosPendentes()
     pegarSalas()
