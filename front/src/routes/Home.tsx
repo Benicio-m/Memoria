@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Input } from '@/components/ui/input';
 import { CheckIcon, Plus, XIcon } from 'lucide-react';
-import { Avatar, AvatarImage } from '../components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
 function Home() {
   const navigate = useNavigate();
   const [error, setError] = useState("")
@@ -326,6 +326,7 @@ function Home() {
                           <div className="items-center justify-end gap-2">
                             <Avatar>
                               <AvatarImage src={user?.profilePhoto}/> 
+                              <AvatarFallback>CN</AvatarFallback>
                             </Avatar>
                             <Button className="w-25 h-10 mt-2 bg-green-600 hover:bg-green-700 text-accent-foreground rounded-md text-base sm:text-lg font-konkhmer-sleokchher" onClick={() => setOpeni(!openi)}>Ok</Button>
                           </div>
