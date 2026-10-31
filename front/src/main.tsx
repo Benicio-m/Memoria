@@ -5,12 +5,13 @@ import { StrictMode } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router';
 import Home from './routes/Home.tsx';
 import Pupil from './routes/Pupil.tsx';
+import News from './routes/ViewerHome.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
       <Routes>
-        {/* <Route path="*" element={<News />} /> */}
+        <Route path="*" element={<News />} />
         <Route path="/escrever" element={<Write />} />
         <Route path="/professor/home" element={<Home />} />
         <Route path="/aluno" element={<Pupil />} />
