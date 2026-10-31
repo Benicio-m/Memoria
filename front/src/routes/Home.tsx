@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Input } from '@/components/ui/input';
 import { CheckIcon, Plus, XIcon } from 'lucide-react';
-import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
+import { Avatar, AvatarBadge, AvatarFallback, AvatarImage } from '../components/ui/avatar';
 function Home() {
   const navigate = useNavigate();
   const [error, setError] = useState("")
@@ -280,6 +280,10 @@ function Home() {
                 <div className="flex flex-col flex-1 w-full items-start justify-center ml-8! font-konkhmer-sleokchher font-400 font-normal p-0"> 
                   <h1 className="text-xl text-left sm:text-2xl md:text-4xl">Salas</h1>
                 </div> 
+                <Avatar>
+                  <AvatarImage src={professor?.profilePhoto} alt="foto"/> 
+                </Avatar>
+                <h2 className="text-accent-foreground rounded-md text-base sm:text-lg">{professor?.name}</h2>
                 <Dialog open={open} onOpenChange={setOpen}>
                   <DialogTrigger className="w-10 h-10 pl-2 bg-transparent hover:bg-border text-accent-foreground text-center rounded-md sm:text-lg"><Plus /></DialogTrigger>
                   <DialogContent className="rounded-md max-h-auto">
@@ -348,9 +352,7 @@ function Home() {
                     </Dialog>
                   </div>
                 ))}
-                <Avatar>
-                  <AvatarImage src={professor?.profilePhoto} alt="foto"/> 
-                </Avatar>
+                
               </div> 
             </Card>
           </div>
