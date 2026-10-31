@@ -17,6 +17,7 @@ function Home() {
   const [roomName, setRoomName] = useState("")
   const [gottenRooms, setGottenRooms] = useState<any[]>([])
   const [pendingGroups, setPendingGroups] = useState<any[]>([])
+  const [professor, setProfessor] = useState<any>(null)
   type User = {
     id: string;
     name: string;
@@ -341,7 +342,7 @@ function Home() {
                   </div>
                 ))}
                 <Avatar>
-                  <AvatarImage src={user?.profilePhoto} alt="foto"/> 
+                  <AvatarImage src={professor?.profilePhoto} alt="foto"/> 
                 </Avatar>
               </div> 
             </Card>
