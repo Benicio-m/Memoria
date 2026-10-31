@@ -184,6 +184,15 @@ function Home() {
         setPendingGroups([]);
       }
     }
+    async function pegarProfessor() {
+      const token = localStorage.getItem('token');
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/rooms/me`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      if (data.ok) setProfessor(data.user);
+    }
+    pegarProfessor();
     pegarUsuariosPendentes()
     pegarSalas()
   }, [])
