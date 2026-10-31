@@ -283,7 +283,7 @@ function Home() {
                 <Avatar>
                   <AvatarImage src={professor?.profilePhoto} alt="foto"/> 
                 </Avatar>
-                <h2 className="text-accent-foreground rounded-md text-base sm:text-lg">{professor?.name}</h2>
+                <h2 className="text-accent-foreground rounded-md text-base sm:text-lg pl-2">{professor?.name}</h2>
                 <Dialog open={open} onOpenChange={setOpen}>
                   <DialogTrigger className="w-10 h-10 pl-2 bg-transparent hover:bg-border text-accent-foreground text-center rounded-md sm:text-lg"><Plus /></DialogTrigger>
                   <DialogContent className="rounded-md max-h-auto">
