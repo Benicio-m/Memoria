@@ -270,7 +270,7 @@ function Home() {
                       <Input placeholder="Nome da sala" className="font-konkhmer-sleokchher rounded-md" onChange={(e) => setRoomName(e.target.value)}/>
                       <div className="flex items-center justify-end gap-2 font-konkhmer-sleokchher">
                         <Button className="w-25 h-10 mt-2 bg-transparent hover:bg-border text-accent-foreground rounded-md text-base sm:text-lg" onClick={() => setOpen(!open)}>Cancelar</Button>
-                        <Button className="w-20 h-10 mt-2 bg-amber-600 hover:bg-amber-700 text-accent-foreground rounded-md text-base sm:text-lg" onClick={() => {
+                        <Button className="w-20 h-10 mt-2 bg-green-600 hover:bg-green-700 text-accent-foreground rounded-md text-base sm:text-lg" onClick={() => {
                           createRoom()
                           return setOpen(!open)
                         }}>Ok</Button>
@@ -278,7 +278,7 @@ function Home() {
                     </DialogHeader>
                   </DialogContent>
                 </Dialog>
-                <Button className="w-20 h-10 bg-amber-600 hover:bg-amber-700 text-accent-foreground rounded-md text-base sm:text-lg" onClick={logout}>Sair</Button>
+                <Button className="w-20 h-10 bg-green-600 hover:bg-green-700 text-accent-foreground rounded-md text-base sm:text-lg" onClick={logout}>Sair</Button>
               </div>
               <div className="flex flex-1 flex-col w-full items-start justify-start ml-8! shadow-accent-foreground font-konkhmer-sleokchher font-400 font-normal p-0">
                 {gottenRooms.map(r => (
@@ -286,7 +286,7 @@ function Home() {
                     <div className="w-4xl items-start justify-center font-konkhmer-sleokchher font-400 font-normal p-0">
                       <h2 className="text-start text-xl">{r.name}</h2>
                     </div>
-                    <Dialog>
+                    <Dialog open={openi}>
                       <DialogTrigger className="text-center text-xl rounded-md hover:bg-border width-lg! p-1">Código: {r.code}</DialogTrigger>
                       <DialogContent className="rounded-md">
                         <DialogHeader className="flex flex-col">
@@ -323,7 +323,7 @@ function Home() {
                             <p className="ml-4 text-base opacity-70 font-konkhmer-sleokchher font-400 font-normal">Nenhum grupo autorizado ainda.</p>
                           )}
                           <div className="items-center justify-end gap-2">
-                            <Button className="w-25 h-10 mt-2 bg-amber-600 hover:bg-amber-700 text-accent-foreground rounded-md text-base sm:text-lg font-konkhmer-sleokchher" onClick={() => setOpeni(!openi)}>Ok</Button>
+                            <Button className="w-25 h-10 mt-2 bg-green-600 hover:bg-green-700 text-accent-foreground rounded-md text-base sm:text-lg font-konkhmer-sleokchher" onClick={() => setOpeni(!openi)}>Ok</Button>
                           </div>
                         </DialogHeader>
                       </DialogContent>
