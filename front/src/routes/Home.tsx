@@ -324,10 +324,6 @@ function Home() {
                             <p className="ml-4 text-base opacity-70 font-konkhmer-sleokchher font-400 font-normal">Nenhum grupo autorizado ainda.</p>
                           )}
                           <div className="items-center justify-end gap-2">
-                            <Avatar>
-                              <AvatarImage src={user?.profilePhoto}/> 
-                              <AvatarFallback>CN</AvatarFallback>
-                            </Avatar>
                             <Button className="w-25 h-10 mt-2 bg-green-600 hover:bg-green-700 text-accent-foreground rounded-md text-base sm:text-lg font-konkhmer-sleokchher" onClick={() => setOpeni(!openi)}>Ok</Button>
                           </div>
                         </DialogHeader>
@@ -335,6 +331,10 @@ function Home() {
                     </Dialog>
                   </div>
                 ))}
+                <Avatar>
+                  <AvatarImage src={user?.profilePhoto}/> 
+                  <AvatarFallback>CN</AvatarFallback>
+                </Avatar>
               </div> 
             </Card>
           </div>
