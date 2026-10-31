@@ -14,10 +14,23 @@ function Pupil() {
     role: "professor" | "aluno";
     roomId?: string;
   };
-  function handleLogout() {
-    localStorage.removeItem("token")
-    localStorage.removeItem("user")
-    navigate("/")
+  const logout = async () => {
+    const token = localStorage.getItem("token")
+    if(token) {
+      try {
+        await fetch(`${import.meta.env.VITE_API_URL}/rooms/logout`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+      } catch (error) {
+        console.log("Erro ao chamar logout: ", error)
+      }
+      localStorage.removeItem("token")
+      localStorage.removeItem("user")
+      navigate("/escrever")
+    }
   }
   useEffect(() => {
     async function verificarLogado() {
@@ -94,7 +107,7 @@ function Pupil() {
                 <div className="flex flex-col flex-1 w-full items-start justify-center ml-8! font-konkhmer-sleokchher font-400 font-normal p-0"> 
                   <h1 className="text-xl text-left sm:text-2xl md:text-4xl">Notícias do grupo </h1>
                 </div>
-                <Button className="w-20 h-10 bg-green-600 hover:bg-green-700 text-accent-foreground rounded-md text-base sm:text-lg" onClick={() => handleLogout}>Sair</Button>
+                <Button className="w-20 h-10 bg-green-600 hover:bg-green-700 text-accent-foreground rounded-md text-base sm:text-lg" onClick={() => logout}>Sair</Button>
               </div> 
             </Card>
           </div>
