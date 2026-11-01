@@ -1,29 +1,29 @@
 import { useEffect, useState } from "react";
 import type { ChangeEvent } from "react";
 import { useNavigate, useParams } from "react-router";
-import { ArrowLeft, Save, Trash } from "lucide-react";
+import { ArrowLeft, Save } from "lucide-react";
+
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 
+
 import JornalLayout from "@/components/jornal/JornalLayout";
 import type { Noticia } from "@/components/jornal/JornalLayout";
+
 
 import EditorMateria from "@/components/jornal/EditorMateria";
 import MarkdownMateria, {
   markdownParaHtml,
 } from "@/components/jornal/MarkdownMateria";
+import { toast, Toaster } from "@/components/ui/toast";
 
-import {
-  criarMateria,
-  editarMateria,
-  deletarMateria,
-} from "@/lib/api";
 
 function AddColumn() {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
+
 
   const [titulo, setTitulo] = useState("");
   const [subtitulo, setSubtitulo] = useState("");
@@ -33,27 +33,32 @@ function AddColumn() {
   const [imagem, setImagem] = useState("");
   const [grupo, setGrupo] = useState("");
 
+
   const [mostrarPrevia, setMostrarPrevia] = useState(false);
   const [carregando, setCarregando] = useState(true);
   const [salvando, setSalvando] = useState(false);
-  const [deletando, setDeletando] = useState(false);
   const [lendoImagem, setLendoImagem] = useState(false);
   const [erro, setErro] = useState("");
 
+
   useEffect(() => {
     const controller = new AbortController();
+
 
     async function carregar() {
       setCarregando(true);
       setErro("");
       setGrupo("");
 
+
       const token = localStorage.getItem("token");
+
 
       if (!token) {
         navigate("/escrever", { replace: true });
         return;
       }
+
 
       try {
         const response = await fetch(
@@ -66,7 +71,9 @@ function AddColumn() {
           }
         );
 
+
         const data = await response.json();
+
 
         if (
           response.status === 401 ||
@@ -76,18 +83,22 @@ function AddColumn() {
           return;
         }
 
+
         if (!response.ok || !data.ok || !data.user) {
           throw new Error(
             data.error || "Não foi possível verificar seu login."
           );
         }
 
+
         if (data.user.role !== "aluno") {
           navigate("/home", { replace: true });
           return;
         }
 
+
         let noticia: Noticia | undefined;
+
 
         if (id) {
           const res = await fetch(
@@ -100,7 +111,9 @@ function AddColumn() {
             }
           );
 
+
           const resultado = await res.json();
+
 
           if (!res.ok || !resultado.ok) {
             throw new Error(
@@ -109,14 +122,17 @@ function AddColumn() {
             );
           }
 
+
           const noticias: Noticia[] =
             Array.isArray(resultado.news)
               ? resultado.news
               : [];
 
+
           noticia = noticias.find(
             (item) => item._id === id
           );
+
 
           if (!noticia) {
             throw new Error(
@@ -125,31 +141,40 @@ function AddColumn() {
           }
         }
 
+
         if (controller.signal.aborted) return;
 
+
         const conteudo = noticia?.content || "";
+
 
         const documento = new DOMParser().parseFromString(
           markdownParaHtml(conteudo),
           "text/html"
         );
 
+
         setTitulo(noticia?.title || "");
         setSubtitulo(noticia?.subtitle || "");
         setImagem(noticia?.iconImage || "");
 
+
         setCorpo(conteudo);
         setConteudoInicial(conteudo);
+
 
         setCorpoVazio(
           !documento.body.textContent?.trim()
         );
 
+
         setGrupo(data.user.name);
       } catch (error) {
         if (controller.signal.aborted) return;
 
+
         console.error("Erro ao carregar editor:", error);
+
 
         setErro(
           error instanceof Error
@@ -163,25 +188,32 @@ function AddColumn() {
       }
     }
 
+
     carregar();
+
 
     return () => controller.abort();
   }, [id, navigate]);
+
 
   function selecionarImagem(
     event: ChangeEvent<HTMLInputElement>
   ) {
     const arquivo = event.target.files?.[0];
 
+
     if (!arquivo) return;
 
+
     setErro("");
+
 
     const tipos = [
       "image/jpeg",
       "image/png",
       "image/webp",
     ];
+
 
     if (
       !tipos.includes(arquivo.type) ||
@@ -194,63 +226,93 @@ function AddColumn() {
       return;
     }
 
+
     setLendoImagem(true);
 
+
     const reader = new FileReader();
+
 
     reader.onload = () => {
       if (typeof reader.result === "string") {
         setImagem(reader.result);
       }
 
+
       setLendoImagem(false);
     };
+
 
     reader.onerror = () => {
       setErro("Não foi possível ler a imagem.");
       setLendoImagem(false);
     };
 
+
     reader.readAsDataURL(arquivo);
   }
 
+
   async function salvar() {
-    if (salvando || deletando || lendoImagem) return;
+    if (salvando || lendoImagem) return;
+
 
     setErro("");
+
 
     if (!titulo.trim() || corpoVazio) {
       setErro("Preencha o título e o corpo da matéria.");
       return;
     }
 
+
     const token = localStorage.getItem("token");
+
 
     if (!token) {
       navigate("/escrever", { replace: true });
       return;
     }
 
+
     setSalvando(true);
 
-    try {
-      const dados = {
-        title: titulo.trim(),
-        subtitle: subtitulo.trim(),
-        content: corpo,
-        iconImage: imagem,
-        authors: grupo,
-      };
 
-      if (id) {
-        await editarMateria(id, dados);
-      } else {
-        await criarMateria(dados);
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/rooms/news${
+          id ? `/${id}` : ""
+        }`,
+        {
+          method: id ? "PUT" : "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            title: titulo.trim(),
+            subtitle: subtitulo.trim(),
+            content: corpo,
+            iconImage: imagem,
+          }),
+        }
+      );
+
+
+      const data = await response.json();
+
+
+      if (!response.ok || !data.ok) {
+        throw new Error(
+          data.error || "Erro ao salvar a matéria."
+        );
       }
+
 
       navigate("/aluno");
     } catch (error) {
       console.error("Erro ao salvar matéria:", error);
+
 
       setErro(
         error instanceof Error
@@ -262,48 +324,39 @@ function AddColumn() {
     }
   }
 
-  async function excluir() {
-    if (!id || deletando || salvando || lendoImagem) {
+  async function deletar() {
+    if (salvando) return;
+    setErro("");
+    const token = localStorage.getItem("token");  
+    const confirmacao = window.confirm("Tem certeza que deseja deletar esta matéria? Esta ação não pode ser desfeita.");
+    if (!confirmacao) return;
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/rooms/news/${id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const data = await response.json();
+    if (!response.ok || !data.ok) {
+      setErro(data.error || "Erro ao deletar a matéria.");
       return;
     }
-
-    const confirmou = window.confirm(
-      "Tem certeza que deseja excluir esta matéria? Esta ação não pode ser desfeita."
-    );
-
-    if (!confirmou) return;
-
-    setDeletando(true);
-    setErro("");
-
-    try {
-      await deletarMateria(id);
-
-      navigate("/aluno");
-    } catch (error) {
-      console.error("Erro ao excluir matéria:", error);
-
-      setErro(
-        error instanceof Error
-          ? error.message
-          : "Erro ao excluir a matéria."
-      );
-    } finally {
-      setDeletando(false);
-    }
+    navigate("/aluno");
+    toast.add({ title: "Matéria deletada com sucesso.", type: "success" });
   }
 
-  const bloqueado =
-    carregando || salvando || deletando || !grupo;
+  const bloqueado = carregando || salvando || !grupo;
 
   return (
     <JornalLayout>
+      <Toaster />
       <Card className="rounded-md p-4 sm:p-6 shadow-md">
         <div className="flex flex-wrap items-center justify-between gap-4 border-b pb-4">
           <div className="min-w-0">
             <h2 className="text-xl sm:text-2xl">
               {id ? "Editar matéria" : "Adicionar matéria"}
             </h2>
+
 
             {grupo && (
               <p className="text-sm opacity-70 mt-2 wrap-break-word">
@@ -312,16 +365,18 @@ function AddColumn() {
             )}
           </div>
 
+
           <Button
             type="button"
             variant="outline"
-            disabled={salvando || deletando}
+            disabled={salvando}
             onClick={() => navigate("/aluno")}
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
             Voltar
           </Button>
         </div>
+
 
         {carregando ? (
           <p className="py-6" role="status">
@@ -340,6 +395,7 @@ function AddColumn() {
                 Título da matéria
               </label>
 
+
               <Input
                 id="titulo"
                 value={titulo}
@@ -352,10 +408,12 @@ function AddColumn() {
               />
             </div>
 
+
             <div className="space-y-2">
               <label htmlFor="subtitulo">
                 Subtítulo (opcional)
               </label>
+
 
               <Input
                 id="subtitulo"
@@ -368,10 +426,12 @@ function AddColumn() {
               />
             </div>
 
+
             <div className="space-y-3">
               <label htmlFor="icone">
                 Imagem de ícone da matéria
               </label>
+
 
               <Input
                 id="icone"
@@ -381,15 +441,18 @@ function AddColumn() {
                 disabled={bloqueado || lendoImagem}
               />
 
+
               <p className="text-xs opacity-70">
                 JPG, PNG ou WebP de até 500 KB.
               </p>
+
 
               {lendoImagem && (
                 <p className="text-sm" role="status">
                   Preparando imagem...
                 </p>
               )}
+
 
               {imagem && (
                 <div className="flex items-center gap-3">
@@ -398,6 +461,7 @@ function AddColumn() {
                     alt="Prévia do ícone da matéria"
                     className="h-24 w-24 rounded-md border object-cover"
                   />
+
 
                   <Button
                     type="button"
@@ -411,9 +475,11 @@ function AddColumn() {
               )}
             </div>
 
+
             <section className="space-y-3">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <h3>Corpo da matéria</h3>
+
 
                 <Button
                   type="button"
@@ -429,6 +495,7 @@ function AddColumn() {
                 </Button>
               </div>
 
+
               {grupo && (
                 <EditorMateria
                   key={id || "nova-materia"}
@@ -441,6 +508,7 @@ function AddColumn() {
                 />
               )}
 
+
               <p className="text-xs opacity-70">
                 Selecione um trecho para formatá-lo.
                 Sem seleção, a formatação vale para o
@@ -448,11 +516,13 @@ function AddColumn() {
               </p>
             </section>
 
+
             {mostrarPrevia && (
               <section className="rounded-md border p-4 sm:p-6">
                 <h3 className="text-lg mb-4">
                   Prévia da publicação
                 </h3>
+
 
                 {corpoVazio ? (
                   <p className="text-sm opacity-70">
@@ -464,6 +534,7 @@ function AddColumn() {
               </section>
             )}
 
+
             {erro && (
               <p
                 className="text-sm text-red-600"
@@ -473,30 +544,17 @@ function AddColumn() {
               </p>
             )}
 
+
             <div className="flex flex-wrap justify-end gap-3 border-t pt-4">
-              {id && (
-                <Button
-                  type="button"
-                  variant="destructive"
-                  disabled={bloqueado || lendoImagem}
-                  onClick={() => void excluir()}
-                >
-                  <Trash className="h-4 w-4 mr-2" />
-
-                  {deletando
-                    ? "Excluindo..."
-                    : "Excluir matéria"}
-                </Button>
-              )}
-
               <Button
                 type="button"
                 variant="outline"
-                disabled={salvando || deletando}
+                disabled={salvando}
                 onClick={() => navigate("/aluno")}
               >
                 Cancelar
               </Button>
+
 
               <Button
                 type="submit"
@@ -504,6 +562,7 @@ function AddColumn() {
                 className="bg-green-600 hover:bg-green-700 text-white"
               >
                 <Save className="h-4 w-4 mr-2" />
+
 
                 {salvando
                   ? "Salvando..."
@@ -518,5 +577,6 @@ function AddColumn() {
     </JornalLayout>
   );
 }
+
 
 export default AddColumn;
