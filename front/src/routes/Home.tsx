@@ -353,7 +353,7 @@ function Home() {
                         </DialogHeader>
                       </DialogContent>
                     </Dialog>
-                    <h2 className="text-center text-xl rounded-md hover:bg-border width-xl p-1">
+                    <h2 className="text-center text-xl rounded-md hover:bg-border width-6xl p-1">
                       Criada por: <Avatar>
                       <AvatarImage src={r.createdBy?.profilePhoto} alt="foto"/>  
                       </Avatar> {r.createdBy.name}
