@@ -115,7 +115,6 @@ rooms.get("/groups/pending", authMiddleware, async (c) => {
 });
 
 // Grupo entra na sala com código + nomes dos integrantes
-// Grupo entra na sala com código + nomes dos integrantes
 rooms.post("/join", async (c) => {
   try {
     await conectarMongo();

@@ -34,7 +34,11 @@ function Home() {
   const [user, setUser] = useState<User | null>(null);
   const [allGroups, setAllGroups] = useState<any[]>([]);
 
-  async function handleAutorizar(salaId: string, grupoId: string, status: 'autorizado' | 'recusado') {
+  async function handleAutorizar(
+    salaId: string,
+    grupoId: string,
+    status: "autorizado" | "recusado"
+  ) {
     if (!salaId || !grupoId) {
       setError("IDs da sala ou do grupo não encontrados.");
       return;
@@ -44,9 +48,9 @@ function Home() {
       const res = await fetch(
         `${import.meta.env.VITE_API_URL}/rooms/${String(salaId)}/groups/${String(grupoId)}`,
         {
-          method: 'PATCH',
+          method: "PATCH",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
           body: JSON.stringify({ status }),
@@ -64,16 +68,65 @@ function Home() {
       }
 
       if (res.ok && data?.ok) {
-        setPendingGroups(prev => prev.filter(g => String(g._id) !== String(grupoId)));
-        setAllGroups(prev => prev.map(g =>
-          String(g._id) === String(grupoId) ? { ...g, status } : g
-        ));
+        setPendingGroups(prev =>
+          prev.filter(
+            g => String(g._id) !== String(grupoId)
+          )
+        );
+
+        setAllGroups(prev =>
+          prev.map(g =>
+            String(g._id) === String(grupoId)
+              ? { ...g, status }
+              : g
+          )
+        );
+
+        setGottenRooms(prev =>
+          prev.map(sala => {
+            if (
+              String(sala._id) !== String(salaId)
+            ) {
+              return sala;
+            }
+
+            return {
+              ...sala,
+              groups: (sala.groups || []).map(
+                (g: any) =>
+                  String(g._id) === String(grupoId)
+                    ? { ...g, status }
+                    : g
+              ),
+            };
+          })
+        );
+
+        toast.add({
+          title:
+            status === "autorizado"
+              ? "Grupo autorizado"
+              : "Grupo recusado",
+          description:
+            status === "autorizado"
+              ? "O grupo agora é membro da sala."
+              : "O grupo não terá acesso à sala.",
+          type: "success",
+        });
       } else {
-        setError(data?.error || "Erro ao atualizar status do grupo.");
+        setError(
+          data?.error ||
+            "Erro ao atualizar status do grupo."
+        );
       }
     } catch (err) {
-      console.error("Erro ao autorizar/recusar:", err);
-      setError("Erro de conexão ao atualizar status.");
+      console.error(
+        "Erro ao autorizar/recusar:",
+        err
+      );
+      setError(
+        "Erro de conexão ao atualizar status."
+      );
     }
   }
 
@@ -418,7 +471,7 @@ function Home() {
                       <h2 className="text-start text-xl">
                         {r.name}
 
-                        {r.blocked && (
+                        {r.status === "bloqueada" && (
                           <span className="ml-2 inline-flex items-center rounded-md bg-red-500/10 px-2 py-1 text-xs text-red-600">
                             <Lock className="mr-1 h-3 w-3" />
                             Bloqueada
