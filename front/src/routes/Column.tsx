@@ -201,17 +201,17 @@ function Column() {
                       Jornal Memória — Tempo em letras
                     </p>
 
-                    <h1 className="text-3xl sm:text-4xl leading-tight break-words font-konkhmer-sleokchher">
+                    <h1 className="text-3xl sm:text-4xl leading-tight wrap-break-word font-konkhmer-sleokchher">
                       {news.title}
                     </h1>
 
                     {news.subtitle && (
-                      <p className="text-lg opacity-75 mt-3 break-words">
+                      <p className="text-lg opacity-75 mt-3 wrap-break-word">
                         {news.subtitle}
                       </p>
                     )}
 
-                    <p className="text-sm mt-4 break-words">
+                    <p className="text-sm mt-4 wrap-break-word">
                       Por: {news.authors}
                     </p>
 
@@ -239,7 +239,7 @@ function Column() {
                     />
                   )}
 
-                  <div className="column-content break-words leading-relaxed text-base sm:text-lg">
+                  <div className="column-content wrap-break-word leading-relaxed text-base sm:text-lg">
                     <ReactMarkdown
                       remarkPlugins={[remarkGfm]}
                       components={{
@@ -281,7 +281,7 @@ function Column() {
                             href={href}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-blue-700 underline break-words"
+                            className="text-blue-700 underline wrap-break-word"
                           >
                             {children}
                           </a>
@@ -357,11 +357,11 @@ function Column() {
                           key={item._id}
                           className="border-b pb-4"
                         >
-                          <p className="font-semibold break-words">
+                          <p className="font-semibold wrap-break-word">
                             {item.author}
                           </p>
 
-                          <p className="text-sm whitespace-pre-wrap break-words mt-2">
+                          <p className="text-sm whitespace-pre-wrap wrap-break-word mt-2">
                             {item.text}
                           </p>
 

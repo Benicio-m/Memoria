@@ -263,7 +263,7 @@ function ViewerHome() {
                                     />
                                   )}
 
-                                  <h3 className="text-lg sm:text-xl break-words">
+                                  <h3 className="text-lg sm:text-xl wrap-break-word">
                                     {noticia.title}
                                   </h3>
 
@@ -271,7 +271,7 @@ function ViewerHome() {
                                     Por: {noticia.authors}
                                   </p>
 
-                                  <p className="text-sm line-clamp-3 break-words">
+                                  <p className="text-sm line-clamp-3 wrap-break-word">
                                     {resumo(noticia.content)}
                                   </p>
                                 </Card>
@@ -319,7 +319,7 @@ function ViewerHome() {
                               )}
 
                               <div className="min-w-0 flex-1">
-                                <h4 className="text-lg sm:text-xl break-words">
+                                <h4 className="text-lg sm:text-xl wrap-break-word">
                                   {noticia.title}
                                 </h4>
 
@@ -327,7 +327,7 @@ function ViewerHome() {
                                   Por: {noticia.authors}
                                 </p>
 
-                                <p className="text-sm mt-2 line-clamp-3 break-words">
+                                <p className="text-sm mt-2 line-clamp-3 wrap-break-word">
                                   {resumo(noticia.content)}
                                 </p>
                               </div>

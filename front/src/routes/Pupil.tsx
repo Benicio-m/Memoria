@@ -266,7 +266,7 @@ function Pupil() {
                 </h2>
 
                 {user && (
-                  <p className="text-sm opacity-70 mt-2 break-words">
+                  <p className="text-sm opacity-70 mt-2 wrap-break-word">
                     {user.name}
                   </p>
                 )}
@@ -326,7 +326,7 @@ function Pupil() {
                       )}
 
                       <div className="min-w-0 flex-1">
-                        <h3 className="text-lg sm:text-xl break-words">
+                        <h3 className="text-lg sm:text-xl wrap-break-word">
                           {noticia.title}
                         </h3>
 
@@ -342,7 +342,7 @@ function Pupil() {
                           })}
                         </p>
 
-                        <p className="text-sm mt-2 line-clamp-3 break-words">
+                        <p className="text-sm mt-2 line-clamp-3 wrap-break-word">
                           {resumo(noticia.content)}
                         </p>
                       </div>
