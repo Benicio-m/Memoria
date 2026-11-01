@@ -149,7 +149,7 @@ function Column() {
   return (
     <ScrollArea className="column-scroll w-full h-dvh bg-border">
       <div className="flex flex-col h-full min-h-dvh w-full">
-        <div className="w-full bg-border mt-0 mb-1.5">
+        <div className="w-full bg-border mt-0">
           <Card className="w-full flex flex-col md:flex-row items-center justify-center gap-6 md:gap-16 p-4 sm:p-6">
             <div className="flex flex-col items-center justify-start h-full">
               <p className="font-konkhmer-sleokchher font-400 text-lg font-normal whitespace-nowrap">Um site:</p>
