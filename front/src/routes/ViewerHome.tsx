@@ -9,141 +9,345 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { FacebookLogoIcon, InstagramLogoIcon } from "@phosphor-icons/react";
+import {
+  FacebookLogoIcon,
+  InstagramLogoIcon,
+} from "@phosphor-icons/react";
+
+type Noticia = {
+  _id: string;
+  title: string;
+  subtitle?: string;
+  iconImage?: string;
+  authors: string;
+  content?: string;
+  createdAt: string;
+};
+
+function resumo(content = "") {
+  const primeiroParagrafo = content
+    .replace(/\r\n/g, "\n")
+    .split(/\n\s*\n/)
+    .map((bloco) => bloco.trim())
+    .find(
+      (bloco) =>
+        bloco.length > 0 &&
+        !/^(#{1,6}\s|!\[|```|---\s*$)/.test(bloco)
+    );
+
+  if (!primeiroParagrafo) return "";
+
+  const texto = primeiroParagrafo
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, "")
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
+    .replace(/[*_~`]/g, "")
+    .replace(/^>\s?/gm, "")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  return texto.length > 180
+    ? `${texto.slice(0, 180).trimEnd()}…`
+    : texto;
+}
 
 function ViewerHome() {
-  const [highlights, setHighlights] = useState<any[]>([]);
-  const [allNews, setAllNews] = useState<any[]>([]);
+  const [highlights, setHighlights] = useState<Noticia[]>([]);
+  const [allNews, setAllNews] = useState<Noticia[]>([]);
+  const [carregando, setCarregando] = useState(true);
+  const [erro, setErro] = useState("");
 
   useEffect(() => {
+    const controller = new AbortController();
+
     async function carregar() {
       const base = import.meta.env.VITE_API_URL;
+
+      setCarregando(true);
+      setErro("");
+
       try {
         const [resH, resN] = await Promise.all([
-          fetch(`${base}/rooms/news/highlights`),
-          fetch(`${base}/rooms/news`),
+          fetch(`${base}/rooms/news/highlights`, {
+            signal: controller.signal,
+          }),
+          fetch(`${base}/rooms/news`, {
+            signal: controller.signal,
+          }),
         ]);
-        const dataH = await resH.json();
-        const dataN = await resN.json();
 
-        if (dataH.ok) setHighlights(dataH.highlights);
-        if (dataN.ok) setAllNews(dataN.news);
-      } catch (err) {
-        console.error("Erro ao carregar notícias:", err);
+        const [dataH, dataN] = await Promise.all([
+          resH.json(),
+          resN.json(),
+        ]);
+
+        if (!resH.ok || !dataH.ok) {
+          throw new Error(
+            dataH.error || "Não foi possível carregar os destaques."
+          );
+        }
+
+        if (!resN.ok || !dataN.ok) {
+          throw new Error(
+            dataN.error || "Não foi possível carregar as notícias."
+          );
+        }
+
+        if (controller.signal.aborted) return;
+
+        setHighlights(
+          Array.isArray(dataH.highlights)
+            ? dataH.highlights.slice(0, 4)
+            : []
+        );
+
+        const noticias: Noticia[] = Array.isArray(dataN.news)
+          ? dataN.news
+          : [];
+
+        setAllNews(
+          [...noticias].sort(
+            (a, b) =>
+              new Date(b.createdAt).getTime() -
+              new Date(a.createdAt).getTime()
+          )
+        );
+      } catch (error) {
+        if (controller.signal.aborted) return;
+
+        console.error("Erro ao carregar o jornal:", error);
+
+        setErro(
+          error instanceof Error
+            ? error.message
+            : "Não foi possível carregar o jornal."
+        );
+      } finally {
+        if (!controller.signal.aborted) {
+          setCarregando(false);
+        }
       }
     }
+
     carregar();
+
+    return () => controller.abort();
   }, []);
 
-  // Agrupa as notícias por data
-  const porData: Record<string, any[]> = {};
-  allNews.forEach((n) => {
-    const data = new Date(n.createdAt).toLocaleDateString("pt-BR");
-    (porData[data] ||= []).push(n);
-  });
+  const porData = allNews.reduce<Record<string, Noticia[]>>(
+    (grupos, noticia) => {
+      const data = new Date(noticia.createdAt).toLocaleDateString(
+        "pt-BR",
+        { timeZone: "America/Sao_Paulo" }
+      );
 
-  // Resumo = primeiro parágrafo do markdown
-  function resumo(content: string) {
-    const paragrafo = content
-      .split("\n")
-      .find((l: string) => l.trim() && !l.startsWith("#"));
-    return (
-      paragrafo?.replace(/[*_#>[\]()!]/g, "").slice(0, 160) + "..."
-    );
-  }
+      if (!grupos[data]) {
+        grupos[data] = [];
+      }
+
+      grupos[data].push(noticia);
+
+      return grupos;
+    },
+    {}
+  );
 
   return (
     <ScrollArea className="w-full h-dvh bg-border">
-      <div className="flex flex-col h-full min-h-dvh w-full">
+      <div className="flex min-h-dvh w-full flex-col">
         {/* Cabeçalho */}
-        <div className="w-full bg-border mt-0 mb-2 sm:mb-4 md:mb-6">
+        <header className="w-full mb-2 sm:mb-4 md:mb-6">
           <Card className="w-full flex flex-col md:flex-row items-center justify-center gap-6 md:gap-16 p-4 sm:p-6">
-            <div className="flex flex-col items-center justify-start h-full">
-              <p className="font-konkhmer-sleokchher font-400 text-lg font-normal whitespace-nowrap">Um site:</p>
-              <div className="flex flex-row items-center justify-center md:justify-start h-full gap-3 mt-2">
-                <img src="https://i.ibb.co/C37cbVFf/image.png" className="h-14 sm:h-16 w-auto object-contain" />
-                <img src="https://bit.ly/partnership-logo-2" className="h-10 sm:h-12 w-auto object-contain" />
+            <div className="flex flex-col items-center justify-start">
+              <p className="font-konkhmer-sleokchher text-lg font-normal">
+                Um site:
+              </p>
+
+              <div className="flex flex-row items-center justify-center gap-3 mt-2">
+                <img
+                  src="https://i.ibb.co/C37cbVFf/image.png"
+                  alt="Instituição parceira"
+                  className="h-14 sm:h-16 w-auto object-contain"
+                />
+
+                <img
+                  src="https://bit.ly/partnership-logo-2"
+                  alt="Instituição parceira"
+                  className="h-10 sm:h-12 w-auto object-contain"
+                />
               </div>
             </div>
+
             <div className="flex flex-col items-center justify-center text-center">
-              <h1 className="text-3xl sm:text-4xl font-normal font-konkhmer-sleokchher font-400 whitespace-nowrap">Jornal Memória</h1>
-              <h2 className="text-xl sm:text-2xl font-normal font-la-belle-aurore font-400">Tempo em letras</h2>
+              <h1 className="text-3xl sm:text-4xl font-normal font-konkhmer-sleokchher">
+                Jornal Memória
+              </h1>
+
+              <h2 className="text-xl sm:text-2xl font-normal font-la-belle-aurore">
+                Tempo em letras
+              </h2>
             </div>
+
             <div className="flex flex-col items-center justify-center text-center">
-              <p className="font-konkhmer-sleokchher font-400 text-lg font-normal whitespace-nowrap">Acesse nossas redes sociais:</p>
-              <div className="flex flex-row items-center justify-center md:justify-end h-full gap-3 mt-2">
-                <a className="text-4xl sm:text-5xl" href="https://www.facebook.com/cpfundamentalemedio/"><FacebookLogoIcon className="text-5xl sm:text-6xl" /></a>
-                <a className="text-4xl sm:text-5xl" href="https://www.instagram.com/colegiopresbiterianomackenzie/"><InstagramLogoIcon className="text-5xl sm:text-6xl" /></a>
+              <p className="font-konkhmer-sleokchher text-lg font-normal">
+                Acesse nossas redes sociais:
+              </p>
+
+              <div className="flex items-center justify-center gap-3 mt-2">
+                <a
+                  href="https://www.facebook.com/cpfundamentalemedio/"
+                  aria-label="Acessar o Facebook"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <FacebookLogoIcon className="text-5xl sm:text-6xl" />
+                </a>
+
+                <a
+                  href="https://www.instagram.com/colegiopresbiterianomackenzie/"
+                  aria-label="Acessar o Instagram"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <InstagramLogoIcon className="text-5xl sm:text-6xl" />
+                </a>
               </div>
             </div>
           </Card>
-        </div>
+        </header>
 
-        {/* Destaques (carrossel) */}
-        <div className="flex flex-1 w-full items-start justify-start bg-border font-konkhmer-sleokchher font-400 font-normal p-0">
-          <div className="flex flex-col flex-1 w-full items-start justify-start bg-border font-konkhmer-sleokchher font-400 font-normal p-0">
-            <Card className="flex flex-col items-center justify-center shadow-accent-foreground shadow-md w-full max-w-7xl p-2 sm:p-3 m-0 rounded-md">
-              <div className="flex flex-row items-center justify-end w-full max-w-2.5xl p-2 sm:p-3 m-0">
-                <div className="flex flex-col flex-1 w-full items-start justify-center ml-8! font-konkhmer-sleokchher font-400 font-normal p-0">
-                  <h1 className="text-xl text-left sm:text-2xl md:text-4xl">Destaques:</h1>
+        {/* Destaques e notícias dentro da mesma área branca */}
+        <main className="w-full max-w-7xl mx-auto px-2 sm:px-4 pb-6 font-konkhmer-sleokchher font-normal">
+          <Card className="w-full flex flex-col gap-8 rounded-md bg-card p-4 sm:p-6 shadow-md shadow-accent-foreground">
+            {carregando ? (
+              <p className="text-sm opacity-70" role="status">
+                Carregando notícias...
+              </p>
+            ) : erro ? (
+              <p className="text-sm text-red-600" role="alert">
+                {erro}
+              </p>
+            ) : (
+              <>
+                {/* Destaques */}
+                <section className="w-full min-w-0">
+                  <h2 className="text-xl sm:text-2xl md:text-4xl">
+                    Destaques:
+                  </h2>
 
                   {highlights.length > 0 ? (
-                    <Carousel className="w-full max-w-2.5xl mt-4">
-                      <CarouselContent>
-                        {highlights.map((n) => (
-                          <CarouselItem key={n._id} className="md:basis-1/2">
-                            <Link to={`/noticia/${n._id}`}>
-                              <Card className="p-4 h-full">
-                                {n.iconImage && (
-                                  <img src={n.iconImage} alt="" className="w-full h-32 object-cover rounded mb-2" />
-                                )}
-                                <h3 className="text-lg">{n.title}</h3>
-                                <p className="text-sm opacity-70">Por: {n.authors}</p>
-                                <p className="text-sm mt-1 line-clamp-2">{resumo(n.content)}</p>
-                              </Card>
-                            </Link>
-                          </CarouselItem>
-                        ))}
-                      </CarouselContent>
-                      <CarouselPrevious />
-                      <CarouselNext />
-                    </Carousel>
-                  ) : (
-                    <p className="text-sm opacity-70 mt-2">Nenhum destaque ainda.</p>
-                  )}
-                </div>
-              </div>
-            </Card>
-          </div>
-        </div>
+                    <div className="px-10 mt-4">
+                      <Carousel
+                        className="w-full"
+                        opts={{
+                          align: "start",
+                          loop: highlights.length > 1,
+                        }}
+                      >
+                        <CarouselContent>
+                          {highlights.map((noticia) => (
+                            <CarouselItem
+                              key={noticia._id}
+                              className="md:basis-1/2"
+                            >
+                              <Link
+                                to={`/noticia/${noticia._id}`}
+                                className="block h-full"
+                              >
+                                <Card className="h-full flex flex-col gap-3 p-4">
+                                  {noticia.iconImage && (
+                                    <img
+                                      src={noticia.iconImage}
+                                      alt=""
+                                      loading="lazy"
+                                      className="w-full h-40 sm:h-48 object-cover rounded-md"
+                                    />
+                                  )}
 
-        {/* Notícias por data */}
-        <div className="w-full max-w-7xl mx-auto p-4 space-y-6">
-          {Object.entries(porData).map(([data, items]) => (
-            <div key={data}>
-              <h2 className="text-2xl mb-3">{data}</h2>
-              <div className="space-y-4">
-                {items.map((n) => (
-                  <Link to={`/noticia/${n._id}`} key={n._id}>
-                    <Card className="p-4 flex gap-4">
-                      {n.iconImage && (
-                        <img src={n.iconImage} alt="" className="w-20 h-20 object-cover rounded" />
-                      )}
-                      <div>
-                        <h3 className="text-xl">{n.title}</h3>
-                        <p className="text-sm opacity-70">Por: {n.authors}</p>
-                        <p className="text-sm mt-1 line-clamp-2">{resumo(n.content)}</p>
+                                  <h3 className="text-lg sm:text-xl break-words">
+                                    {noticia.title}
+                                  </h3>
+
+                                  <p className="text-sm opacity-70">
+                                    Por: {noticia.authors}
+                                  </p>
+
+                                  <p className="text-sm line-clamp-3 break-words">
+                                    {resumo(noticia.content)}
+                                  </p>
+                                </Card>
+                              </Link>
+                            </CarouselItem>
+                          ))}
+                        </CarouselContent>
+
+                        <CarouselPrevious aria-label="Destaque anterior" />
+                        <CarouselNext aria-label="Próximo destaque" />
+                      </Carousel>
+                    </div>
+                  ) : (
+                    <p className="text-sm opacity-70 mt-3">
+                      Nenhum destaque ainda.
+                    </p>
+                  )}
+                </section>
+
+                {/* Notícias por data */}
+                <section className="w-full space-y-6 border-t pt-6">
+                  <h2 className="text-xl sm:text-2xl">
+                    Notícias:
+                  </h2>
+
+                  {Object.entries(porData).map(([data, noticias]) => (
+                    <div key={data}>
+                      <h3 className="text-lg mb-3">{data}</h3>
+
+                      <div className="space-y-4">
+                        {noticias.map((noticia) => (
+                          <Link
+                            to={`/noticia/${noticia._id}`}
+                            key={noticia._id}
+                            className="block"
+                          >
+                            <div className="flex items-start gap-4 rounded-md border p-3 sm:p-4 hover:bg-muted/50 transition-colors">
+                              {noticia.iconImage && (
+                                <img
+                                  src={noticia.iconImage}
+                                  alt=""
+                                  loading="lazy"
+                                  className="w-20 h-20 sm:w-28 sm:h-28 shrink-0 object-cover rounded-md"
+                                />
+                              )}
+
+                              <div className="min-w-0 flex-1">
+                                <h4 className="text-lg sm:text-xl break-words">
+                                  {noticia.title}
+                                </h4>
+
+                                <p className="text-sm opacity-70 mt-1">
+                                  Por: {noticia.authors}
+                                </p>
+
+                                <p className="text-sm mt-2 line-clamp-3 break-words">
+                                  {resumo(noticia.content)}
+                                </p>
+                              </div>
+                            </div>
+                          </Link>
+                        ))}
                       </div>
-                    </Card>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          ))}
-          {allNews.length === 0 && (
-            <p className="opacity-70">Nenhuma notícia publicada ainda.</p>
-          )}
-        </div>
+                    </div>
+                  ))}
+
+                  {allNews.length === 0 && (
+                    <p className="text-sm opacity-70">
+                      Nenhuma notícia publicada ainda.
+                    </p>
+                  )}
+                </section>
+              </>
+            )}
+          </Card>
+        </main>
       </div>
     </ScrollArea>
   );
