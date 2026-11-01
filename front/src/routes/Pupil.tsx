@@ -261,7 +261,7 @@ function Pupil() {
           <Card className="w-full flex flex-col gap-6 rounded-md p-4 sm:p-6 shadow-md shadow-accent-foreground">
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div className="min-w-0 flex-1">
-                <h2 className="text-xl sm:text-2xl md:text-3xl">
+                <h2 className="text-xl sm:text-2xl md:text-3xl whitespace-nowrap">
                   Matérias do grupo: {user && (
                   <p className="text-xl sm:text-2xl md:text-3xl font-normal font-konkhmer-sleokchher">
                     {user.name}
