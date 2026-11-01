@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import type { ChangeEvent } from "react";
 import { useNavigate, useParams } from "react-router";
-import { ArrowLeft, Save } from "lucide-react";
+import { ArrowLeft, Save, Trash } from "lucide-react";
 
 
 import { Button } from "@/components/ui/button";
@@ -17,7 +17,6 @@ import EditorMateria from "@/components/jornal/EditorMateria";
 import MarkdownMateria, {
   markdownParaHtml,
 } from "@/components/jornal/MarkdownMateria";
-import { toast, Toaster } from "@/components/ui/toast";
 
 
 function AddColumn() {
@@ -37,6 +36,7 @@ function AddColumn() {
   const [mostrarPrevia, setMostrarPrevia] = useState(false);
   const [carregando, setCarregando] = useState(true);
   const [salvando, setSalvando] = useState(false);
+  const [deletando, setDeletando] = useState(false);
   const [lendoImagem, setLendoImagem] = useState(false);
   const [erro, setErro] = useState("");
 
@@ -254,7 +254,7 @@ function AddColumn() {
 
 
   async function salvar() {
-    if (salvando || lendoImagem) return;
+    if (salvando || deletando || lendoImagem) return;
 
 
     setErro("");
@@ -324,32 +324,78 @@ function AddColumn() {
     }
   }
 
-  async function deletar() {
-    if (salvando) return;
-    setErro("");
-    const token = localStorage.getItem("token");  
-    const confirmacao = window.confirm("Tem certeza que deseja deletar esta matéria? Esta ação não pode ser desfeita.");
-    if (!confirmacao) return;
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/rooms/news/${id}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    const data = await response.json();
-    if (!response.ok || !data.ok) {
-      setErro(data.error || "Erro ao deletar a matéria.");
+
+  async function excluir() {
+    if (!id || deletando || salvando || lendoImagem) {
       return;
     }
-    navigate("/aluno");
-    toast.add({ title: "Matéria deletada com sucesso.", type: "success" });
+
+
+    const token = localStorage.getItem("token");
+
+
+    if (!token) {
+      navigate("/escrever", { replace: true });
+      return;
+    }
+
+
+    const confirmou = window.confirm(
+      "Tem certeza que deseja excluir esta matéria? Esta ação não pode ser desfeita."
+    );
+
+
+    if (!confirmou) return;
+
+
+    setDeletando(true);
+    setErro("");
+
+
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/rooms/news/${id}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+
+      const data = await response.json();
+
+
+      if (!response.ok || !data.ok) {
+        throw new Error(
+          data.error || "Erro ao excluir a matéria."
+        );
+      }
+
+
+      navigate("/aluno");
+    } catch (error) {
+      console.error("Erro ao excluir matéria:", error);
+
+
+      setErro(
+        error instanceof Error
+          ? error.message
+          : "Erro ao excluir a matéria."
+      );
+    } finally {
+      setDeletando(false);
+    }
   }
 
-  const bloqueado = carregando || salvando || !grupo;
+
+  const bloqueado =
+    carregando || salvando || deletando || !grupo;
+
 
   return (
     <JornalLayout>
-      <Toaster />
       <Card className="rounded-md p-4 sm:p-6 shadow-md">
         <div className="flex flex-wrap items-center justify-between gap-4 border-b pb-4">
           <div className="min-w-0">
@@ -369,7 +415,7 @@ function AddColumn() {
           <Button
             type="button"
             variant="outline"
-            disabled={salvando}
+            disabled={salvando || deletando}
             onClick={() => navigate("/aluno")}
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
@@ -546,10 +592,27 @@ function AddColumn() {
 
 
             <div className="flex flex-wrap justify-end gap-3 border-t pt-4">
+              {id && (
+                <Button
+                  type="button"
+                  variant="destructive"
+                  disabled={bloqueado || lendoImagem}
+                  onClick={() => void excluir()}
+                >
+                  <Trash className="h-4 w-4 mr-2" />
+
+
+                  {deletando
+                    ? "Excluindo..."
+                    : "Excluir matéria"}
+                </Button>
+              )}
+
+
               <Button
                 type="button"
                 variant="outline"
-                disabled={salvando}
+                disabled={salvando || deletando}
                 onClick={() => navigate("/aluno")}
               >
                 Cancelar
