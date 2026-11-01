@@ -217,7 +217,7 @@ rooms.post("/join", async (c) => {
     });
   } catch (err) {
     console.error("Erro no /join:", err);
-    return c.json({ error: "Erro ao entrar na sala" }, 500);
+    return c.json({ error: "Erro ao entrar na sala" + err.message }, 500);
   }
 });
 
