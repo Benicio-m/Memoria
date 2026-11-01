@@ -18,7 +18,9 @@ function Write() {
   const [tipoLogin, setTipoLogin] = useState<"professor" | "aluno">("professor")
   const [code, setCode] = useState("")
   const [name, setName] = useState("")
-  async function handleAlunoLogin(e: React.FormEvent) {
+  async function handleAlunoLogin(
+    e: React.MouseEvent<HTMLButtonElement>
+  ) {
     e.preventDefault();
     setError("");
     setLoading(true);
@@ -50,7 +52,22 @@ function Write() {
       );
 
       const text = await res.text();
-      const data = text ? JSON.parse(text) : {};
+
+      let data: any = {};
+
+      try {
+        data = text ? JSON.parse(text) : {};
+      } catch {
+        setError("Resposta inválida do servidor.");
+
+        toast.add({
+          title: "Erro",
+          description: "Resposta inválida do servidor.",
+          type: "error",
+        });
+
+        return;
+      }
 
       if (!res.ok || !data.ok) {
         setError(data.error || "Erro ao entrar na sala");
@@ -64,7 +81,8 @@ function Write() {
                 ? "Sala não encontrada"
                 : res.status === 400
                   ? "Informe o código da sala e o nome dos integrantes do grupo!"
-                  : data.error || "Erro ao entrar na sala",
+                  : data.error ||
+                    "Erro ao entrar na sala",
           type: "error",
         });
 
@@ -85,15 +103,33 @@ function Write() {
 
       if (data.group.status === "autorizado") {
         navigate("/aluno");
+      } else {
+        toast.add({
+          title: "Acesso pendente",
+          description:
+            data.message ||
+            "Aguardando autorização do professor.",
+          type: "info",
+        });
       }
     } catch (err) {
       console.error("Erro no login do aluno:", err);
-      setError("Erro de conexão. Tente novamente.");
+
+      setError(
+        "Erro de conexão. Tente novamente."
+      );
+
+      toast.add({
+        title: "Erro",
+        description:
+          "Erro de conexão. Tente novamente.",
+        type: "error",
+      });
     } finally {
       setLoading(false);
     }
   }
-  async function handleProfessorLogin(e: React.FormEvent) {
+  async function handleProfessorLogin(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
     setError("");
     setLoading(true);

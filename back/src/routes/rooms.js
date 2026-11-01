@@ -116,35 +116,52 @@ rooms.get("/groups/pending", authMiddleware, async (c) => {
 
 // Grupo entra na sala com código + nomes dos integrantes
 // Grupo entra na sala com código + nomes dos integrantes
-rooms.post("/join", authMiddleware,async (c) => {
+rooms.post("/join", async (c) => {
   try {
     await conectarMongo();
 
-    const { code, name, members } = await c.req.json();
+    const { code, name, members } = await c.req.json()
 
-    if (!code || !name) {
+    if (!code?.trim() || !name?.trim()) {
       return c.json(
-        { error: "Informe o código da sala e o nome do grupo" },
+        {
+          error:
+            "Informe o código da sala e o nome dos integrantes do grupo!",
+        },
         400
       );
     }
-    if(room.status === "bloqueada") {
-      return c.json({ error: "Sala bloqueada pelo professor" }, 403);
-    }
+
     const room = await Room.findOne({
       code: code.trim().toUpperCase(),
     });
 
     if (!room) {
-      return c.json({ error: "Sala não encontrada" }, 404);
+      return c.json(
+        { error: "Sala não encontrada" },
+        404
+      );
+    }
+
+    if (room.status === "bloqueada") {
+      return c.json(
+        { error: "Sala bloqueada pelo professor" },
+        403
+      );
     }
 
     const groupName = name.trim();
 
-    // Aceita members como string "João, Maria" ou array ["João", "Maria"]
+    // O frontend envia apenas "name".
+    // Usamos esse campo como lista de integrantes.
     const memberList = Array.isArray(members)
-      ? members.map((m) => String(m).trim()).filter(Boolean)
-      : (members || "").split(",").map((m) => m.trim()).filter(Boolean);
+      ? members
+          .map((m) => String(m).trim())
+          .filter(Boolean)
+      : name
+          .split(",")
+          .map((m) => m.trim())
+          .filter(Boolean);
 
     let group = await Group.findOne({
       roomId: room._id,
@@ -183,7 +200,10 @@ rooms.post("/join", authMiddleware,async (c) => {
 
     if (group.status === "recusado") {
       return c.json(
-        { error: "Este grupo foi recusado pelo professor" },
+        {
+          error:
+            "Este grupo foi recusado pelo professor",
+        },
         403
       );
     }
@@ -195,7 +215,9 @@ rooms.post("/join", authMiddleware,async (c) => {
         role: "aluno",
         roomId: room._id.toString(),
         groupStatus: group.status,
-        exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24,
+        exp:
+          Math.floor(Date.now() / 1000) +
+          60 * 60 * 24,
       },
       process.env.JWT_SECRET,
       "HS256"
@@ -217,10 +239,13 @@ rooms.post("/join", authMiddleware,async (c) => {
     });
   } catch (err) {
     console.error("Erro no /join:", err);
-    return c.json({ error: "Erro ao entrar na sala" + err.message }, 500);
+
+    return c.json(
+      { error: "Erro ao entrar na sala" },
+      500
+    );
   }
 });
-
 // Autorizar ou recusar grupo em uma sala
 // PATCH /rooms/:roomId/groups/:groupId
 rooms.patch("/:roomId/groups/:groupId", authMiddleware, async (c) => {
