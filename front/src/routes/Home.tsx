@@ -77,7 +77,10 @@ function Home() {
     }
   }
 
-  async function handleBloquearSala(salaId: string, bloquear: boolean) {
+  async function handleAlterarStatusSala(
+    salaId: string,
+    status: "aberta" | "bloqueada"
+  ) {
     if (!salaId || bloqueandoId) return;
 
     setBloqueandoId(salaId);
@@ -85,16 +88,14 @@ function Home() {
 
     try {
       const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/rooms/${salaId}/block`,
+        `${import.meta.env.VITE_API_URL}/rooms/${salaId}/status`,
         {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-          body: JSON.stringify({
-            blocked: bloquear,
-          }),
+          body: JSON.stringify({ status }),
         }
       );
 
@@ -112,22 +113,32 @@ function Home() {
         setGottenRooms(prev =>
           prev.map(sala =>
             String(sala._id) === String(salaId)
-              ? { ...sala, blocked: bloquear }
+              ? { ...sala, status }
               : sala
           )
         );
 
         toast.add({
-          title: bloquear ? "Sala bloqueada" : "Sala desbloqueada",
+          title:
+            status === "bloqueada"
+              ? "Sala bloqueada"
+              : "Sala desbloqueada",
           description: "A alteração foi salva.",
           type: "success",
         });
       } else {
-        setError(data?.error || "Erro ao alterar o status da sala.");
+        setError(
+          data?.error || "Erro ao alterar o status da sala."
+        );
       }
     } catch (err) {
-      console.error("Erro ao bloquear/desbloquear sala:", err);
-      setError("Erro de conexão ao alterar o status da sala.");
+      console.error(
+        "Erro ao bloquear/desbloquear sala:",
+        err
+      );
+      setError(
+        "Erro de conexão ao alterar o status da sala."
+      );
     } finally {
       setBloqueandoId(null);
     }
@@ -482,14 +493,16 @@ function Home() {
                       variant="outline"
                       disabled={bloqueandoId === String(r._id)}
                       onClick={() =>
-                        handleBloquearSala(
+                        handleAlterarStatusSala(
                           String(r._id),
-                          !r.blocked
+                          r.status === "bloqueada"
+                            ? "aberta"
+                            : "bloqueada"
                         )
                       }
                       className="ml-3 h-10 rounded-md text-base sm:text-lg"
                     >
-                      {r.blocked ? (
+                      {r.status === "bloqueada" ? (
                         <>
                           <LockOpen className="mr-2 h-4 w-4" />
                           Desbloquear
