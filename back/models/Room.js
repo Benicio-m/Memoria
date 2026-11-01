@@ -24,6 +24,11 @@ const roomSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Teacher",
     },
+    status: {
+      type: String,
+      enum: ["aberta", "bloqueada"],
+      default: "aberta",
+    },
   },
   {
     timestamps: true,

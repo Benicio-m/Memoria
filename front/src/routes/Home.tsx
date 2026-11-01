@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom'
 import { Input } from '@/components/ui/input';
 import { CheckIcon, Plus, XIcon } from 'lucide-react';
 import { Avatar, AvatarImage } from '../components/ui/avatar';
+import { toast, Toaster } from '@/components/ui/toast';
 function Home() {
   const navigate = useNavigate();
   const [error, setError] = useState("")
@@ -62,6 +63,7 @@ function Home() {
         setAllGroups(prev => prev.map(g =>
           String(g._id) === String(grupoId) ? { ...g, status } : g
         ));
+        
       } else {
         setError(data?.error || "Erro ao atualizar status do grupo.");
       }
@@ -120,7 +122,7 @@ function Home() {
 
     const data = await response.json();
     if(response.ok && data.ok) {
-      alert("Sala criada: " + data.room)
+      toast.add({ title: "Sala criada: ", description: data.room.name, type: "success" });
     } else {
       setError(data.error || "Erro ao criar sala");
       console.log(error)
@@ -250,6 +252,7 @@ function Home() {
   }, [navigate]);
   return (
     <ScrollArea className="w-full h-dvh bg-border">
+      <Toaster />
       <div className="flex flex-col h-full min-h-dvh w-full">
         <div className="w-full bg-border mt-0 mb-2 sm:mb-4 md:mb-6">
           <Card className="w-full flex flex-col md:flex-row items-center justify-center gap-6 md:gap-16 p-4 sm:p-6">
@@ -350,6 +353,11 @@ function Home() {
                         </DialogHeader>
                       </DialogContent>
                     </Dialog>
+                    <h2 className="text-center text-xl rounded-md hover:bg-border width-lg! p-1">
+                      Criada por: <Avatar>
+                      <AvatarImage src={r.createdBy?.profilePhoto} alt="foto"/>  
+                      </Avatar> {r.createdBy.name}
+                    </h2>
                   </div>
                 ))}
                 

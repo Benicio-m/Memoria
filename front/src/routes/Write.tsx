@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs'
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Spinner } from '@/components/ui/spinner';
+import { toast, Toaster } from '@/components/ui/toast';
 function Write() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("")
@@ -41,7 +42,7 @@ function Write() {
 
       if (!res.ok || !data.ok) {
         setError(data.error || "Erro ao entrar na sala");
-        return;
+        return res.status === 403 || data.status === 403 ? toast.add({ title: "Erro", description: "Sala bloqueada pelo professor", type: "error" }) : data.status === 404 || res.status === 404 ? toast.add({ title: "Erro", description: "Sala não encontrada", type: "error" }) : data.status === 400 || res.status === 400 ? toast.add({ title: "Erro", description: "Informe o código da sala e o nome dos integrantes do grupo!", type: "error" }) : toast.add({ title: "Erro", description: data.error || "Erro ao entrar na sala", type: "error" });
       }
 
       localStorage.setItem("token", data.token);
@@ -87,7 +88,9 @@ function Write() {
       const text = await response.text();
 
       let data: any = {};
-
+      if(response.status === 401) {
+        toast.add({ title: "Erro de login", description: "E-mail ou senha incorretos", type: "error" });
+      }
       try {
         data = text ? JSON.parse(text) : {};
       } catch (parseError) {
@@ -154,6 +157,7 @@ function Write() {
   }, [navigate]);
   return loading ? (
     <ScrollArea className="w-full h-dvh bg-border">
+      <Toaster />
       <div className="flex flex-col h-full min-h-dvh w-full">
         <div className="w-full bg-border mt-0 mb-2 sm:mb-4 md:mb-6">
           <Card className="w-full flex flex-col md:flex-row items-center justify-center gap-6 md:gap-16 p-4 sm:p-6">
@@ -213,7 +217,7 @@ function Write() {
                 <TabsTrigger value="sala" className="w-1/2 h-10 text-base sm:text-lg rounded-md">Sala</TabsTrigger>
               </TabsList>
               <TabsContent value="prof" className="flex flex-col flex-1 w-full h-full"> 
-                <h1 className="text-lg sm:text-xl md:text-2xl text-center">Logue com seu e-mail para poder escrever</h1>
+                <h1 className="text-lg sm:text-xl md:text-2xl text-center">Logue com seu e-mail</h1>
                 <Input className="w-full h-9 mt-2" placeholder="E-mail" value={email} onChange={(e) => setEmail(e.target.value)} />
                 <Input type="password" className="w-full h-9 mt-2" placeholder="Senha" value={senha} onChange={(e) => setSenha(e.target.value)}/>
                 <Button className="w-full h-10 mt-2 bg-green-600 hover:bg-green-700 text-accent-foreground rounded-md text-base sm:text-lg" onClick={handleProfessorLogin}> Entrar</Button>
