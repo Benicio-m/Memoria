@@ -24,28 +24,55 @@ function Write() {
     setLoading(true);
 
     try {
-      if(!code || !name || !code && !name) {
-        alert("Preencha todos os campos")
-        return
+      if (!code.trim() || !name.trim()) {
+        toast.add({
+          title: "Erro",
+          description:
+            "Informe o código da sala e o nome dos integrantes do grupo!",
+          type: "error",
+        });
+
+        return;
       }
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/rooms/join`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          code: code,
-          name: name, // ex.: "João, Maria, Pedro"
-        }),
-      });
+
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/rooms/join`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            code: code.trim(),
+            name: name.trim(),
+          }),
+        }
+      );
 
       const text = await res.text();
       const data = text ? JSON.parse(text) : {};
 
       if (!res.ok || !data.ok) {
         setError(data.error || "Erro ao entrar na sala");
-        return res.status === 403 || data.status === 403 ? toast.add({ title: "Erro", description: "Sala bloqueada pelo professor", type: "error" }) : data.status === 404 || res.status === 404 ? toast.add({ title: "Erro", description: "Sala não encontrada", type: "error" }) : data.status === 400 || res.status === 400 ? toast.add({ title: "Erro", description: "Informe o código da sala e o nome dos integrantes do grupo!", type: "error" }) : toast.add({ title: "Erro", description: data.error || "Erro ao entrar na sala", type: "error" });
+
+        toast.add({
+          title: "Erro",
+          description:
+            res.status === 403
+              ? "Sala bloqueada pelo professor"
+              : res.status === 404
+                ? "Sala não encontrada"
+                : res.status === 400
+                  ? "Informe o código da sala e o nome dos integrantes do grupo!"
+                  : data.error || "Erro ao entrar na sala",
+          type: "error",
+        });
+
+        return;
       }
 
       localStorage.setItem("token", data.token);
+
       localStorage.setItem(
         "user",
         JSON.stringify({
@@ -58,8 +85,6 @@ function Write() {
 
       if (data.group.status === "autorizado") {
         navigate("/aluno");
-      } else {
-        setLoading(true);
       }
     } catch (err) {
       console.error("Erro no login do aluno:", err);
