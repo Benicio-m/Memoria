@@ -262,14 +262,12 @@ function Pupil() {
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div className="min-w-0 flex-1">
                 <h2 className="text-xl sm:text-2xl md:text-3xl">
-                  Matérias do grupo:
-                </h2>
-
-                {user && (
-                  <p className="text-sm opacity-70 mt-2 wrap-break-word">
+                  Matérias do grupo: {user && (
+                  <p className="text-xl sm:text-2xl md:text-3xl font-normal font-konkhmer-sleokchher">
                     {user.name}
                   </p>
                 )}
+                </h2>
               </div>
 
               <div className="flex items-center gap-2">
