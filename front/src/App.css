@@ -182,3 +182,138 @@
     border-right-color: var(--border);
   }
 }
+
+/* Elementos exclusivos da impressão ficam ocultos no site. */
+.column-print-only {
+  display: none !important;
+}
+
+@media print {
+  @page {
+    margin: 15mm;
+  }
+
+  html,
+  body,
+  #root {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+    background: white !important;
+  }
+
+  /* Oculta navegação, botões e comentários. */
+  .column-screen-only {
+    display: none !important;
+  }
+
+  /* Mostra o QR code somente na impressão. */
+  .column-print-only {
+    display: block !important;
+  }
+
+  /* Libera o ScrollArea para imprimir todo o conteúdo. */
+  .column-scroll,
+  .column-scroll [data-radix-scroll-area-viewport] {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  .column-scroll [data-radix-scroll-area-viewport] > div {
+    display: block !important;
+  }
+
+  .column-scroll [data-radix-scroll-area-scrollbar],
+  .column-scroll [data-radix-scroll-area-corner] {
+    display: none !important;
+  }
+
+  .column-page {
+    min-height: 0 !important;
+    padding: 0 !important;
+    background: white !important;
+    color: black !important;
+  }
+
+  .column-container {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+  }
+
+  .column-document {
+    display: block !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: white !important;
+    color: black !important;
+  }
+
+  .column-content h2,
+  .column-content h3,
+  .column-content h4 {
+    break-after: avoid;
+  }
+
+  .column-document img {
+    max-width: 100% !important;
+    break-inside: avoid;
+  }
+
+  .column-content p {
+    orphans: 3;
+    widows: 3;
+  }
+
+  /* QR code no final da matéria, sem dividir entre páginas. */
+  .column-qrcode {
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid #999;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .column-qrcode-layout {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .column-qrcode-image {
+    flex-shrink: 0;
+    padding: 12px;
+    background: white;
+  }
+
+  .column-qrcode-image svg {
+    display: block;
+  }
+
+  .column-qrcode-text {
+    min-width: 0;
+    color: black;
+  }
+
+  .column-qrcode-text h2 {
+    margin: 0 0 8px;
+    font-size: 16pt;
+  }
+
+  .column-qrcode-text p {
+    margin: 0 0 8px;
+    font-size: 10pt;
+  }
+
+  .column-qrcode-text a {
+    color: black;
+    font-size: 9pt;
+    overflow-wrap: anywhere;
+    text-decoration: underline;
+  }
+}
