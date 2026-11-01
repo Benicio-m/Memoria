@@ -116,7 +116,7 @@ rooms.get("/groups/pending", authMiddleware, async (c) => {
 
 // Grupo entra na sala com código + nomes dos integrantes
 // Grupo entra na sala com código + nomes dos integrantes
-rooms.post("/join", async (c) => {
+rooms.post("/join", authMiddleware,async (c) => {
   try {
     await conectarMongo();
 
@@ -524,7 +524,7 @@ rooms.get("/news/mine", authMiddleware, async (c) => {
 });
 
 // Todas as notícias (home do jornal)
-rooms.get("/news", async (c) => {
+rooms.get("/news", authMiddleware, async (c) => {
   try {
     await conectarMongo();
     const news = await News.find()
@@ -538,7 +538,7 @@ rooms.get("/news", async (c) => {
 });
 
 // 4 destaques aleatórios (mudam a cada dia)
-rooms.get("/news/highlights", async (c) => {
+rooms.get("/news/highlights", authMiddleware, async (c) => {
   try {
     await conectarMongo();
     const all = await News.find().select("title iconImage authors content createdAt");
@@ -554,7 +554,7 @@ rooms.get("/news/highlights", async (c) => {
 });
 
 // Uma notícia completa
-rooms.get("/news/:id", async (c) => {
+rooms.get("/news/:id", authMiddleware, async (c) => {
   try {
     await conectarMongo();
     const news = await News.findById(c.req.param("id"));
@@ -567,7 +567,7 @@ rooms.get("/news/:id", async (c) => {
 });
 
 // Adicionar comentário
-rooms.post("/news/:id/comments", async (c) => {
+rooms.post("/news/:id/comments", authMiddleware, async (c) => {
   try {
     await conectarMongo();
     const { author, text } = await c.req.json();
