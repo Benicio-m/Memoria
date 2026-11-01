@@ -548,7 +548,7 @@ rooms.get("/news/mine", authMiddleware, async (c) => {
 });
 
 // Todas as notícias (home do jornal)
-rooms.get("/news", authMiddleware, async (c) => {
+rooms.get("/news", async (c) => {
   try {
     await conectarMongo();
     const news = await News.find()
@@ -562,7 +562,7 @@ rooms.get("/news", authMiddleware, async (c) => {
 });
 
 // 4 destaques aleatórios (mudam a cada dia)
-rooms.get("/news/highlights", authMiddleware, async (c) => {
+rooms.get("/news/highlights", async (c) => {
   try {
     await conectarMongo();
     const all = await News.find().select("title iconImage authors content createdAt");
