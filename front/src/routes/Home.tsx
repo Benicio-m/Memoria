@@ -354,7 +354,7 @@ function Home() {
                       </DialogContent>
                     </Dialog>
                     <h2 className="flex flex-row justify-start items-center text-xl rounded-md hover:bg-border p-1">
-                      Criada por: <Avatar>
+                      Criada por: <Avatar className="ml-2 mr-2">
                       <AvatarImage src={r.createdBy?.profilePhoto} alt="foto"/>  
                       </Avatar> {r.createdBy.name}
                     </h2>
