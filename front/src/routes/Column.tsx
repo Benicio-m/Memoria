@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 import { QRCodeSVG } from "qrcode.react";
 import { ArrowLeft, Printer } from "lucide-react";
 
@@ -10,6 +8,8 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
+
+import MarkdownMateria from "@/components/jornal/MarkdownMateria";
 
 type Comentario = {
   _id: string;
@@ -37,7 +37,7 @@ function Column() {
   const [erro, setErro] = useState("");
 
   const [nome, setNome] = useState("");
-  const [comentario, setComentario] = useState("");
+  const [texto, setTexto] = useState("");
   const [enviando, setEnviando] = useState(false);
   const [erroComentario, setErroComentario] = useState("");
 
@@ -48,16 +48,14 @@ function Column() {
       setCarregando(true);
       setErro("");
       setNews(null);
+      setTexto("");
       setErroComentario("");
-      setComentario("");
-
-      if (!id) {
-        setErro("Matéria não informada.");
-        setCarregando(false);
-        return;
-      }
 
       try {
+        if (!id) {
+          throw new Error("Matéria não informada.");
+        }
+
         const response = await fetch(
           `${import.meta.env.VITE_API_URL}/rooms/news/${id}`,
           {
@@ -67,24 +65,22 @@ function Column() {
 
         const data = await response.json();
 
-        if (controller.signal.aborted) return;
-
         if (!response.ok || !data.ok || !data.news) {
           throw new Error(
-            data.error || "Não foi possível carregar a matéria."
+            data.error || "Matéria não encontrada."
           );
         }
 
-        setNews(data.news);
+        if (!controller.signal.aborted) {
+          setNews(data.news);
+        }
       } catch (error) {
         if (controller.signal.aborted) return;
-
-        console.error("Erro ao carregar matéria:", error);
 
         setErro(
           error instanceof Error
             ? error.message
-            : "Erro de conexão ao carregar a matéria."
+            : "Erro ao carregar a matéria."
         );
       } finally {
         if (!controller.signal.aborted) {
@@ -99,9 +95,7 @@ function Column() {
   }, [id]);
 
   async function comentar() {
-    const texto = comentario.trim();
-
-    if (!id || !texto || enviando) return;
+    if (!texto.trim() || enviando || !id) return;
 
     setEnviando(true);
     setErroComentario("");
@@ -116,7 +110,7 @@ function Column() {
           },
           body: JSON.stringify({
             author: nome.trim() || "Anônimo",
-            text: texto,
+            text: texto.trim(),
           }),
         }
       );
@@ -125,19 +119,17 @@ function Column() {
 
       if (!response.ok || !data.ok || !data.news) {
         throw new Error(
-          data.error || "Não foi possível enviar o comentário."
+          data.error || "Erro ao enviar comentário."
         );
       }
 
       setNews(data.news);
-      setComentario("");
+      setTexto("");
     } catch (error) {
-      console.error("Erro ao comentar:", error);
-
       setErroComentario(
         error instanceof Error
           ? error.message
-          : "Erro de conexão ao enviar o comentário."
+          : "Erro de conexão."
       );
     } finally {
       setEnviando(false);
@@ -157,23 +149,21 @@ function Column() {
     <ScrollArea className="column-scroll w-full h-dvh bg-border">
       <main className="column-page min-h-dvh px-3 py-6 sm:px-6">
         <div className="column-container w-full max-w-3xl mx-auto">
-          {/* Navegação: somente no site */}
           <nav className="column-screen-only flex items-center justify-between gap-3 mb-4">
             <Link
               to="/"
               className="inline-flex items-center gap-2 text-sm underline"
             >
-              <ArrowLeft className="w-4 h-4" />
+              <ArrowLeft className="h-4 w-4" />
               Voltar ao jornal
             </Link>
 
             {news && !carregando && !erro && (
               <Button
-                type="button"
                 variant="outline"
                 onClick={() => window.print()}
               >
-                <Printer className="w-4 h-4 mr-2" />
+                <Printer className="h-4 w-4 mr-2" />
                 Imprimir
               </Button>
             )}
@@ -181,19 +171,21 @@ function Column() {
 
           {carregando ? (
             <Card className="p-6">
-              <p className="text-sm opacity-70" role="status">
+              <p role="status">
                 Carregando matéria...
               </p>
             </Card>
           ) : erro || !news ? (
             <Card className="p-6">
-              <p className="text-red-600" role="alert">
+              <p
+                role="alert"
+                className="text-red-600"
+              >
                 {erro || "Matéria não encontrada."}
               </p>
             </Card>
           ) : (
             <>
-              {/* Matéria: aparece no site e na impressão */}
               <Card className="column-document p-5 sm:p-8">
                 <article>
                   <header className="mb-6">
@@ -219,15 +211,14 @@ function Column() {
                       dateTime={news.createdAt}
                       className="block text-sm opacity-70 mt-1"
                     >
-                      {new Date(news.createdAt).toLocaleDateString(
-                        "pt-BR",
-                        {
-                          day: "2-digit",
-                          month: "long",
-                          year: "numeric",
-                          timeZone: "America/Sao_Paulo",
-                        }
-                      )}
+                      {new Date(
+                        news.createdAt
+                      ).toLocaleDateString("pt-BR", {
+                        day: "2-digit",
+                        month: "long",
+                        year: "numeric",
+                        timeZone: "America/Sao_Paulo",
+                      })}
                     </time>
                   </header>
 
@@ -239,77 +230,11 @@ function Column() {
                     />
                   )}
 
-                  <div className="column-content wrap-break-word leading-relaxed text-base sm:text-lg">
-                    <ReactMarkdown
-                      remarkPlugins={[remarkGfm]}
-                      components={{
-                        h1: ({ children }) => (
-                          <h2 className="text-3xl font-bold mt-8 mb-4">
-                            {children}
-                          </h2>
-                        ),
-                        h2: ({ children }) => (
-                          <h2 className="text-2xl font-bold mt-7 mb-3">
-                            {children}
-                          </h2>
-                        ),
-                        h3: ({ children }) => (
-                          <h3 className="text-xl font-bold mt-6 mb-3">
-                            {children}
-                          </h3>
-                        ),
-                        h4: ({ children }) => (
-                          <h4 className="text-lg font-bold mt-5 mb-2">
-                            {children}
-                          </h4>
-                        ),
-                        p: ({ children }) => (
-                          <p className="mb-4">{children}</p>
-                        ),
-                        ul: ({ children }) => (
-                          <ul className="list-disc pl-6 mb-4 space-y-1">
-                            {children}
-                          </ul>
-                        ),
-                        ol: ({ children }) => (
-                          <ol className="list-decimal pl-6 mb-4 space-y-1">
-                            {children}
-                          </ol>
-                        ),
-                        a: ({ href, children }) => (
-                          <a
-                            href={href}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-blue-700 underline wrap-break-word"
-                          >
-                            {children}
-                          </a>
-                        ),
-                        blockquote: ({ children }) => (
-                          <blockquote className="border-l-4 pl-4 italic opacity-80 my-4">
-                            {children}
-                          </blockquote>
-                        ),
-                        img: ({ src, alt }) => (
-                          <img
-                            src={src}
-                            alt={alt || ""}
-                            className="max-w-full h-auto rounded-md my-4"
-                          />
-                        ),
-                        pre: ({ children }) => (
-                          <pre className="overflow-x-auto whitespace-pre-wrap rounded-md bg-muted p-4 mb-4 text-sm">
-                            {children}
-                          </pre>
-                        ),
-                      }}
-                    >
-                      {news.content}
-                    </ReactMarkdown>
-                  </div>
+                  <MarkdownMateria
+                    content={news.content}
+                  />
 
-                  {/* QR code: somente na impressão */}
+                  {/* Somente na impressão */}
                   <footer className="column-print-only column-qrcode">
                     <div className="column-qrcode-layout">
                       <div className="column-qrcode-image">
@@ -323,11 +248,13 @@ function Column() {
                       </div>
 
                       <div className="column-qrcode-text">
-                        <h2>Leia esta matéria online</h2>
+                        <h2>
+                          Leia esta matéria online
+                        </h2>
 
                         <p>
-                          Escaneie o QR code para acessar esta
-                          matéria no Jornal Memória.
+                          Escaneie o QR code para acessar
+                          esta matéria no Jornal Memória.
                         </p>
 
                         <a href={urlPublica}>
@@ -339,46 +266,44 @@ function Column() {
                 </article>
               </Card>
 
-              {/* Comentários: somente no site */}
+              {/* Somente no site */}
               <section className="column-screen-only mt-6">
                 <Card className="p-5 sm:p-6 space-y-5">
                   <h2 className="text-xl font-konkhmer-sleokchher">
                     Comentários ({comentarios.length})
                   </h2>
 
-                  {comentarios.length === 0 ? (
+                  {comentarios.length === 0 && (
                     <p className="text-sm opacity-70">
-                      Ainda não há comentários nesta matéria.
+                      Ainda não há comentários.
                     </p>
-                  ) : (
-                    <div className="space-y-4">
-                      {comentarios.map((item) => (
-                        <div
-                          key={item._id}
-                          className="border-b pb-4"
-                        >
-                          <p className="font-semibold wrap-break-word">
-                            {item.author}
-                          </p>
-
-                          <p className="text-sm whitespace-pre-wrap wrap-break-word mt-2">
-                            {item.text}
-                          </p>
-
-                          <time
-                            dateTime={item.createdAt}
-                            className="block text-xs opacity-60 mt-2"
-                          >
-                            {new Date(
-                              item.createdAt
-                            ).toLocaleString("pt-BR", {
-                              timeZone: "America/Sao_Paulo",
-                            })}
-                          </time>
-                        </div>
-                      ))}
-                    </div>
                   )}
+
+                  {comentarios.map((comentario) => (
+                    <div
+                      key={comentario._id}
+                      className="border-b pb-4"
+                    >
+                      <p className="font-semibold wrap-break-word">
+                        {comentario.author}
+                      </p>
+
+                      <p className="whitespace-pre-wrap wrap-break-word mt-2">
+                        {comentario.text}
+                      </p>
+
+                      <time
+                        dateTime={comentario.createdAt}
+                        className="block text-xs opacity-60 mt-2"
+                      >
+                        {new Date(
+                          comentario.createdAt
+                        ).toLocaleString("pt-BR", {
+                          timeZone: "America/Sao_Paulo",
+                        })}
+                      </time>
+                    </div>
+                  ))}
 
                   <form
                     className="space-y-3"
@@ -387,52 +312,47 @@ function Column() {
                       void comentar();
                     }}
                   >
-                    <div className="space-y-2">
-                      <label
-                        htmlFor="nome-comentario"
-                        className="text-sm"
-                      >
-                        Seu nome (opcional)
-                      </label>
+                    <label
+                      htmlFor="nome-comentario"
+                      className="block text-sm"
+                    >
+                      Seu nome (opcional)
+                    </label>
 
-                      <Input
-                        id="nome-comentario"
-                        value={nome}
-                        onChange={(event) =>
-                          setNome(event.target.value)
-                        }
-                        placeholder="Anônimo"
-                        maxLength={80}
-                        disabled={enviando}
-                      />
-                    </div>
+                    <Input
+                      id="nome-comentario"
+                      value={nome}
+                      onChange={(event) =>
+                        setNome(event.target.value)
+                      }
+                      maxLength={80}
+                      disabled={enviando}
+                      placeholder="Anônimo"
+                    />
 
-                    <div className="space-y-2">
-                      <label
-                        htmlFor="texto-comentario"
-                        className="text-sm"
-                      >
-                        Comentário
-                      </label>
+                    <label
+                      htmlFor="comentario"
+                      className="block text-sm"
+                    >
+                      Comentário
+                    </label>
 
-                      <Textarea
-                        id="texto-comentario"
-                        value={comentario}
-                        onChange={(event) =>
-                          setComentario(event.target.value)
-                        }
-                        placeholder="Escreva seu comentário..."
-                        className="min-h-28"
-                        maxLength={2000}
-                        required
-                        disabled={enviando}
-                      />
-                    </div>
+                    <Textarea
+                      id="comentario"
+                      value={texto}
+                      onChange={(event) =>
+                        setTexto(event.target.value)
+                      }
+                      maxLength={2000}
+                      required
+                      disabled={enviando}
+                      placeholder="Escreva seu comentário..."
+                    />
 
                     {erroComentario && (
                       <p
-                        className="text-sm text-red-600"
                         role="alert"
+                        className="text-sm text-red-600"
                       >
                         {erroComentario}
                       </p>
@@ -440,10 +360,14 @@ function Column() {
 
                     <Button
                       type="submit"
-                      className="bg-green-600 hover:bg-green-700"
-                      disabled={enviando || !comentario.trim()}
+                      disabled={
+                        enviando || !texto.trim()
+                      }
+                      className="bg-green-600 hover:bg-green-700 text-white"
                     >
-                      {enviando ? "Enviando..." : "Comentar"}
+                      {enviando
+                        ? "Enviando..."
+                        : "Comentar"}
                     </Button>
                   </form>
                 </Card>

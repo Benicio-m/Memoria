@@ -188,6 +188,155 @@
   display: none !important;
 }
 
+/* =========================================
+   EDITOR VISUAL
+   ========================================= */
+
+.editor-materia-conteudo {
+  min-height: 360px;
+  padding: 16px;
+  outline: none;
+  overflow-wrap: anywhere;
+
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+
+  color: var(--foreground);
+}
+
+.editor-materia-conteudo:focus {
+  outline: none;
+}
+
+.editor-materia-conteudo p {
+  margin: 0 0 12px;
+}
+
+.editor-materia-conteudo p:last-child {
+  margin-bottom: 0;
+}
+
+.editor-materia-conteudo ul {
+  list-style-type: disc;
+  padding-left: 24px;
+  margin: 12px 0;
+}
+
+.editor-materia-conteudo ol {
+  list-style-type: decimal;
+  padding-left: 24px;
+  margin: 12px 0;
+}
+
+.editor-materia-conteudo li {
+  margin: 4px 0;
+}
+
+.editor-materia-conteudo li p {
+  margin: 0;
+}
+
+.editor-materia-conteudo strong {
+  font-weight: 700;
+}
+
+.editor-materia-conteudo em {
+  font-style: italic;
+}
+
+.editor-materia-conteudo a {
+  color: #1d4ed8;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.editor-materia-conteudo h1 {
+  font-size: 32px;
+  font-weight: 700;
+  margin: 24px 0 12px;
+}
+
+.editor-materia-conteudo h2 {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 20px 0 12px;
+}
+
+.editor-materia-conteudo h3 {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 16px 0 10px;
+}
+
+.editor-materia-conteudo blockquote {
+  border-left: 4px solid #aaa;
+  padding-left: 16px;
+  margin: 16px 0;
+  font-style: italic;
+}
+
+.editor-materia-conteudo pre {
+  padding: 12px;
+  margin: 12px 0;
+  overflow-x: auto;
+  background: rgba(127, 127, 127, 0.1);
+  border-radius: 6px;
+}
+
+.editor-materia-conteudo.ProseMirror-focused {
+  box-shadow: inset 0 0 0 1px rgba(127, 127, 127, 0.25);
+}
+
+/* =========================================
+   TAMANHOS SALVOS NA MATÉRIA
+   ========================================= */
+
+.materia-fonte-12 {
+  font-size: 12px;
+}
+
+.materia-fonte-14 {
+  font-size: 14px;
+}
+
+.materia-fonte-16 {
+  font-size: 16px;
+}
+
+.materia-fonte-18 {
+  font-size: 18px;
+}
+
+.materia-fonte-20 {
+  font-size: 20px;
+}
+
+.materia-fonte-24 {
+  font-size: 24px;
+}
+
+.materia-fonte-28 {
+  font-size: 28px;
+}
+
+.materia-fonte-32 {
+  font-size: 32px;
+}
+
+.materia-markdown span[class*="materia-fonte-"] {
+  line-height: 1.5;
+}
+
+/* QR code não aparece no site. */
+.column-print-only {
+  display: none !important;
+}
+
+/* =========================================
+   IMPRESSÃO
+   ========================================= */
+
 @media print {
   @page {
     margin: 15mm;
@@ -208,12 +357,12 @@
     display: none !important;
   }
 
-  /* Mostra o QR code somente na impressão. */
+  /* Mostra o QR code. */
   .column-print-only {
     display: block !important;
   }
 
-  /* Libera o ScrollArea para imprimir todo o conteúdo. */
+  /* Libera todo o conteúdo do ScrollArea. */
   .column-scroll,
   .column-scroll [data-radix-scroll-area-viewport] {
     height: auto !important;
@@ -254,9 +403,9 @@
     color: black !important;
   }
 
-  .column-content h2,
-  .column-content h3,
-  .column-content h4 {
+  .materia-markdown h2,
+  .materia-markdown h3,
+  .materia-markdown h4 {
     break-after: avoid;
   }
 
@@ -265,12 +414,11 @@
     break-inside: avoid;
   }
 
-  .column-content p {
+  .materia-markdown p {
     orphans: 3;
     widows: 3;
   }
 
-  /* QR code no final da matéria, sem dividir entre páginas. */
   .column-qrcode {
     margin-top: 24px;
     padding-top: 16px;
