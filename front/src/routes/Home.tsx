@@ -391,7 +391,7 @@ function Home() {
   return (
     <ScrollArea className="w-full h-dvh bg-border">
       <Toaster />
-
+      
       <div className="flex flex-col h-full min-h-dvh w-full">
         <div className="w-full bg-border mt-0 mb-2 sm:mb-4 md:mb-6">
           <Card className="w-full flex flex-col md:flex-row items-center justify-center gap-6 md:gap-16 p-4 sm:p-6">
