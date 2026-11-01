@@ -308,7 +308,7 @@ function Home() {
               <div className="flex flex-1 flex-col w-full items-start justify-start ml-8! shadow-accent-foreground font-konkhmer-sleokchher font-400 font-normal p-0">
                 {gottenRooms.map(r => (
                   <div className="flex flex-1 flex-row w-full items-center justify-center shadow-accent-foreground font-konkhmer-sleokchher font-400 font-normal p-0" key={r._id || r.id}>
-                    <div className="w-4xl items-start justify-center font-konkhmer-sleokchher font-400 font-normal p-0">
+                    <div className="w-3xl items-start justify-center font-konkhmer-sleokchher font-400 font-normal p-0">
                       <h2 className="text-start text-xl">{r.name}</h2>
                     </div>
                     <Dialog open={openi} onOpenChange={setOpeni}>
