@@ -578,7 +578,7 @@ rooms.get("/news/highlights", async (c) => {
 });
 
 // Uma notícia completa
-rooms.get("/news/:id", authMiddleware, async (c) => {
+rooms.get("/news/:id", async (c) => {
   try {
     await conectarMongo();
     const news = await News.findById(c.req.param("id"));
@@ -591,7 +591,7 @@ rooms.get("/news/:id", authMiddleware, async (c) => {
 });
 
 // Adicionar comentário
-rooms.post("/news/:id/comments", authMiddleware, async (c) => {
+rooms.post("/news/:id/comments", async (c) => {
   try {
     await conectarMongo();
     const { author, text } = await c.req.json();
