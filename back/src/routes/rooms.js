@@ -586,4 +586,36 @@ rooms.post("/news/:id/comments", async (c) => {
   }
 });
 
+materias.delete(
+  "/news/:id",
+  authMiddleware,
+  async (c) => {
+    try {
+      const id = c.req.param("id");
+
+      const materia = await Materias.findById(id);
+
+      if (!materia) {
+        return c.json(
+          { message: "Matéria não encontrada." },
+          404
+        );
+      }
+
+      await materia.deleteOne();
+
+      return c.json({
+        message: "Matéria excluída com sucesso.",
+      });
+    } catch (error) {
+      console.error(error);
+
+      return c.json(
+        { message: "Erro ao excluir a matéria." },
+        500
+      );
+    }
+  }
+);
+
 export default rooms;
