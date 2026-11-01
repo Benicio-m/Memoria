@@ -117,7 +117,7 @@ function JornalLayout({
               </h2>
             </div>
 
-            {/* Redes sociais */}
+            {/* Para as Redes sociais */}
             <div className="flex flex-col items-center justify-center text-center">
               <p className="font-konkhmer-sleokchher text-lg font-normal">
                 Acesse nossas redes sociais:
