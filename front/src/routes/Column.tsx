@@ -176,7 +176,7 @@ function Column() {
           </Card>
         </div>
       </div>
-      <div className="column-page min-h-dvh px-3 py-6 sm:px-6">
+      <div className="column-page min-h-dvh px-3 py-3 sm:px-6">
         <div className="column-container w-full max-w-3xl mx-auto">
           <nav className="column-screen-only flex items-center justify-between gap-3 mb-4">
             <Link
