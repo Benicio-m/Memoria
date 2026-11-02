@@ -328,8 +328,8 @@ function Column() {
 
               {/* Somente no site */}
               <section className="column-screen-only mt-6">
-                <Card className="p-5 sm:p-6 space-y-5">
-                  <h2 className="text-xl font-konkhmer-sleokchher">
+                <Card className="p-5 sm:p-6 space-y-5 font-konkhmer-sleokchher font-normal">
+                  <h2 className="text-xl">
                     Comentários ({comentarios.length})
                   </h2>
 
