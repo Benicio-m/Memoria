@@ -442,7 +442,7 @@ function Column() {
             <p className="font-konkhmer-sleokchher text-lg font-normal">
               Créditos:
             </p>
-            <ul className="list-disc list-inside text-left">
+            <ul className="list-disc list-inside text-left font-200">
               <li>Proposta: Professora Vânia e Professor Cláudio</li>
               <li>Visuais: Professora Larissa Rocha Scaleti Lopes</li>
               <li>Matérias: Alunos escritores e redatores das turmas</li>
