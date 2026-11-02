@@ -148,33 +148,64 @@ function Column() {
 
   return (
     <ScrollArea className="column-scroll w-full h-dvh bg-border">
-      <header className="flex flex-col h-full min-h-dvh w-full">
-        <div className="w-full bg-border mt-0">
-          <Card className="w-full flex flex-col md:flex-row items-center justify-center gap-6 md:gap-16 p-4 sm:p-6">
-            <div className="flex flex-col items-center justify-start h-full">
-              <p className="font-konkhmer-sleokchher font-400 text-lg font-normal whitespace-nowrap">Um site:</p>
+      <header className="w-full mb-2 sm:mb-4 md:mb-6">
+        <Card className="w-full flex flex-col md:flex-row items-center justify-center gap-6 md:gap-16 p-4 sm:p-6">
+          <div className="flex flex-col items-center justify-start">
+            <p className="font-konkhmer-sleokchher text-lg font-normal">
+              Um site:
+            </p>
 
-              <div className="flex flex-row items-center justify-center md:justify-start h-full gap-3 mt-2">
-                <img src="https://i.ibb.co/C37cbVFf/image.png" className="h-14 sm:h-16 w-auto object-contain" />
-                <img src="https://bit.ly/partnership-logo-2" className="h-10 sm:h-12 w-auto object-contain" />
-              </div>
+            <div className="flex flex-row items-center justify-center gap-3 mt-2">
+              <img
+                src="https://i.ibb.co/C37cbVFf/image.png"
+                alt="Instituição parceira"
+                className="h-14 sm:h-16 w-auto object-contain"
+              />
+
+              <img
+                src="https://bit.ly/partnership-logo-2"
+                alt="Instituição parceira"
+                className="h-10 sm:h-12 w-auto object-contain"
+              />
             </div>
+          </div>
 
-            <div className="flex flex-col items-center justify-center text-center">
-              <h1 className="text-3xl sm:text-4xl font-normal font-konkhmer-sleokchher font-400 whitespace-nowrap">Jornal Memória</h1>
-              <h2 className="text-xl sm:text-2xl font-normal font-la-belle-aurore font-400">Tempo em letras</h2>
+          <div className="flex flex-col items-center justify-center text-center">
+            <h1 className="text-3xl sm:text-4xl font-normal font-konkhmer-sleokchher">
+              Jornal Memória
+            </h1>
+
+            <h2 className="text-xl sm:text-2xl font-normal font-la-belle-aurore">
+              Tempo em letras
+            </h2>
+          </div>
+
+          <div className="flex flex-col items-center justify-center text-center">
+            <p className="font-konkhmer-sleokchher text-lg font-normal">
+              Acesse nossas redes sociais:
+            </p>
+
+            <div className="flex items-center justify-center gap-3 mt-2">
+              <a
+                href="https://www.facebook.com/cpfundamentalemedio/"
+                aria-label="Acessar o Facebook"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <FacebookLogoIcon className="text-5xl sm:text-6xl" />
+              </a>
+
+              <a
+                href="https://www.instagram.com/colegiopresbiterianomackenzie/"
+                aria-label="Acessar o Instagram"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <InstagramLogoIcon className="text-5xl sm:text-6xl" />
+              </a>
             </div>
-
-            <div className="flex flex-col items-center justify-center text-center">
-              <p className="font-konkhmer-sleokchher font-400 text-lg font-normal whitespace-nowrap">Acesse nossas redes sociais:</p>
-
-              <div className="flex flex-row items-center justify-center md:justify-end h-full gap-3 mt-2">
-                <a className="text-4xl sm:text-5xl" href="https://www.facebook.com/cpfundamentalemedio/"><FacebookLogoIcon className="text-5xl sm:text-6xl" /></a>
-                <a className="text-4xl sm:text-5xl" href="https://www.instagram.com/colegiopresbiterianomackenzie/"><InstagramLogoIcon className="text-5xl sm:text-6xl" /></a>
-              </div>
-            </div>
-          </Card>
-        </div>
+          </div>
+        </Card>
       </header>
       <main className="column-page min-h-dvh px-3 pt-1 pb-6 sm:px-6">
         <div className="column-container w-full max-w-3xl mx-auto">
