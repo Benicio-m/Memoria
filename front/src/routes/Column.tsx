@@ -436,6 +436,23 @@ function Column() {
           )}
         </div>
       </main>
+      <footer className="hid-printable w-full mt-6 mb-2 sm:mb-4 md:mb-6">
+        <Card className="w-full flex flex-col md:flex-row items-center justify-center gap-6 md:gap-16 p-4 sm:p-6">
+          <div className="flex flex-col items-center justify-start">
+            <p className="font-konkhmer-sleokchher text-lg font-normal">
+              Créditos:
+            </p>
+            <ul className="list-disc list-inside text-left">
+              <li>Proposta: Professora Vânia e Professor Cláudio</li>
+              <li>Visuais: Professora Larissa Rocha Scaleti Lopes</li>
+              <li>Matérias: Alunos escritores e redatores das turmas</li>
+              <li>Difusão: Nicole Campos de Carvalho, Pedro Henrique Boscolo Padua, </li>
+              <li>Design e estrutura: Benício Motta Ramires</li>
+              <li>Escrita: Alunos redatores das salas participantes</li>
+            </ul>
+          </div>
+        </Card>
+      </footer>
     </ScrollArea>
   );
 }
