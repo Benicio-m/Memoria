@@ -176,9 +176,9 @@ function Column() {
           </Card>
         </div>
       </div>
-      <main className="column-page min-h-dvh px-3 pt-3 pb-6 sm:px-6">
+      <main className="column-page min-h-dvh px-3 pt-1 pb-6 sm:px-6">
         <div className="column-container w-full max-w-3xl mx-auto">
-          <nav className="column-screen-only flex items-center justify-between gap-3 mb-2">
+          <nav className="column-screen-only flex items-center justify-between gap-3 mt-1">
             <Link
               to="/"
               className="inline-flex items-center gap-2 text-sm underline"
