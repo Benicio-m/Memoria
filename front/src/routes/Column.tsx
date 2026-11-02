@@ -448,7 +448,6 @@ function Column() {
               <li>Matérias: Alunos escritores e redatores das turmas</li>
               <li>Difusão: Nicole Campos de Carvalho, Pedro Henrique Boscolo Padua, </li>
               <li>Design e estrutura: Benício Motta Ramires</li>
-              <li>Escrita: Alunos redatores das salas participantes</li>
             </ul>
           </div>
         </Card>
