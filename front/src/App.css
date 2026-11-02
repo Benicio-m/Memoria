@@ -341,7 +341,9 @@
   @page {
     margin: 15mm;
   }
-
+  .hid-printable {
+    display: none !important;
+  }
   html,
   body,
   #root {
