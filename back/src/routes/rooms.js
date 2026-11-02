@@ -610,36 +610,35 @@ rooms.post("/news/:id/comments", async (c) => {
   }
 });
 
-rooms.delete(
-  "/news/:id",
-  authMiddleware,
-  async (c) => {
-    try {
-      const id = c.req.param("id");
+rooms.delete("/news/:id", authMiddleware, async (c) => {
+  try {
+    await conectarMongo();
 
-      const news = await News.findById(id);
+    const { id } = c.req.param();
 
-      if (!news) {
-        return c.json(
-          { message: "Notícia não encontrada." },
-          404
-        );
-      }
+    const news = await News.findById(id);
 
-      await news.deleteOne();
-
-      return c.json({
-        message: "Notícia excluída com sucesso.",
-      });
-    } catch (error) {
-      console.error(error);
-
+    if (!news) {
       return c.json(
-        { message: "Erro ao excluir a notícia." },
-        500
+        { error: "Matéria não encontrada." },
+        404
       );
     }
+
+    await news.deleteOne();
+
+    return c.json({
+      ok: true,
+      message: "Matéria excluída com sucesso.",
+    });
+  } catch (err) {
+    console.error("Erro ao excluir matéria:", err);
+
+    return c.json(
+      { error: "Erro ao excluir a matéria." },
+      500
+    );
   }
-);
+});
 
 export default rooms;
