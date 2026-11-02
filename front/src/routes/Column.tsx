@@ -436,7 +436,7 @@ function Column() {
           )}
         </div>
       </main>
-      <footer className="hid-printable w-full mt-6 mb-2 sm:mb-4 md:mb-6">
+      <footer className="hid-printable w-full mt-6 mb-0">
         <Card className="w-full flex flex-col md:flex-row items-center justify-center gap-6 md:gap-16 p-4 sm:p-6">
           <div className="flex flex-col items-center justify-start">
             <p className="font-konkhmer-sleokchher text-lg font-normal">
