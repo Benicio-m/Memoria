@@ -57,21 +57,41 @@ export function markdownParaHtml(content = "") {
 }
 
 export function resumoMateria(content = "") {
-  const tree = parserResumo.parse(content);
+  const primeiroParagrafo = content
+    .replace(/\r\n/g, "\n")
+    .split(/\n\s*\n/)
+    .map((bloco) => bloco.trim())
+    .find(
+      (bloco) =>
+        bloco.length > 0 &&
+        !/^(#{1,6}\s|!\[|```|---\s*$)/.test(bloco)
+    );
 
-  let primeiroParagrafo = "";
+  if (!primeiroParagrafo) return "";
 
-  visit(tree, "paragraph", (node) => {
-    if (primeiroParagrafo) return;
+  const texto = primeiroParagrafo
+    // Remove imagens
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, "")
+    // Remove links, mantendo apenas o texto
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
+    // Remove formatação de negrito, itálico, tachado e código
+    .replace(/(\*\*|__)(.*?)\1/g, "$2")
+    .replace(/(\*|_)(.*?)\1/g, "$2")
+    .replace(/~~(.*?)~~/g, "$1")
+    .replace(/`([^`]*)`/g, "$1")
+    // Remove diretivas de fonte, como :fonte{tamanho=3}
+    .replace(/:[a-zA-Z-]+\{[^}]*\}/g, "")
+    // Remove citações
+    .replace(/^>\s?/gm, "")
+    // Remove caracteres Markdown restantes
+    .replace(/[*_~`#]/g, "")
+    // Normaliza espaços
+    .replace(/\s+/g, " ")
+    .trim();
 
-    const texto = toString(node)
-      .replace(/\s+/g, " ")
-      .trim();
-
-    if (texto) primeiroParagrafo = texto;
-  });
-
-  return primeiroParagrafo;
+  return texto.length > 180
+    ? `${texto.slice(0, 180).trimEnd()}…`
+    : texto;
 }
 
 export default function MarkdownMateria({
