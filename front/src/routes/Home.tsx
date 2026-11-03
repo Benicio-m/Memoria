@@ -135,7 +135,16 @@ function Home() {
     salaId: string,
     status: "aberta" | "bloqueada"
   ) {
-    if (!salaId || bloqueandoId) return;
+    if (!salaId || salaId === "undefined" || bloqueandoId) {
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      setError("Sua sessão expirou. Entre novamente.");
+      return;
+    }
 
     setBloqueandoId(salaId);
     setError("");
@@ -147,51 +156,54 @@ function Home() {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({ status }),
         }
       );
 
-      const text = await res.text();
-      let data: any = null;
+      const data = await res.json();
 
-      try {
-        data = text ? JSON.parse(text) : null;
-      } catch {
-        setError("Resposta inválida do servidor.");
-        return;
-      }
-
-      if (res.ok && data?.ok) {
-        setGottenRooms(prev =>
-          prev.map(sala =>
-            String(sala._id) === String(salaId)
-              ? { ...sala, status }
-              : sala
-          )
-        );
-
-        toast.add({
-          title:
-            status === "bloqueada"
-              ? "Sala bloqueada"
-              : "Sala desbloqueada",
-          description: "A alteração foi salva.",
-          type: "success",
-        });
-      } else {
-        setError(
+      if (!res.ok || !data?.ok) {
+        throw new Error(
           data?.error || "Erro ao alterar o status da sala."
         );
       }
-    } catch (err) {
-      console.error(
-        "Erro ao bloquear/desbloquear sala:",
-        err
+
+      const statusSalvo = data.room?.status;
+
+      if (
+        statusSalvo !== "aberta" &&
+        statusSalvo !== "bloqueada"
+      ) {
+        throw new Error(
+          "O servidor não retornou um status válido para a sala."
+        );
+      }
+
+      setGottenRooms((salas) =>
+        salas.map((sala) =>
+          String(sala._id || sala.id) === salaId
+            ? { ...sala, status: statusSalvo }
+            : sala
+        )
       );
+
+      toast.add({
+        title:
+          statusSalvo === "bloqueada"
+            ? "Sala bloqueada"
+            : "Sala desbloqueada",
+        description: "A alteração foi salva.",
+        type: "success",
+      });
+    } catch (err) {
+      console.error("Erro ao alterar status da sala:", err);
+
       setError(
-        "Erro de conexão ao alterar o status da sala."
+        err instanceof Error
+          ? err.message
+          : "Erro de conexão ao alterar o status da sala."
       );
     } finally {
       setBloqueandoId(null);
