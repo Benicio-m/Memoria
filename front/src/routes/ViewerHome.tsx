@@ -38,8 +38,8 @@ function resumo(content = "") {
   if (!primeiroParagrafo) return "";
 
   const texto = primeiroParagrafo
-    // Remove imagens
-    .replace(/!\[[^\]]*\]\([^)]*\)/g, "")
+    // Mantém somente o texto da diretiva de fonte
+    .replace(/:fonte\[([^\]]*)\](?:\{[^}]*\})?/g, "$1")
     // Remove links, mantendo apenas o texto
     .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
     // Remove negrito
