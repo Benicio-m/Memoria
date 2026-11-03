@@ -446,7 +446,7 @@ function Column() {
               <li>Proposta: Professora Vânia Felix e Professor Cláudio Inacio do Nascimento</li>
               <li>Visuais: Professora Larissa Rocha Scaleti Lopes</li>
               <li>Matérias: Alunos escritores e redatores das turmas</li>
-              <li>Difusão: Nicole Campos de Carvalho, Pedro Henrique Boscolo Padua, João Pedro Lezo, Lorena Possignolo Ghiraldi, Isabella Rufino de Oliveira, Vitor Emanuel Lopes de Reis</li>
+              <li>Difusão: Nicole Campos de Carvalho, Pedro Henrique Boscolo Padua, João Pedro Lezo, Lorena Possignolo Ghiraldi, Isabella Rufino de Oliveira, Vitor Emanuel Lopes de Reis, Maria Eduarda Pimenta Rocha</li>
               <li>Design e estrutura: Benício Motta Ramires</li>
             </ul>
           </div>
