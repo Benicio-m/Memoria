@@ -83,7 +83,7 @@ function JornalLayout({
     <ScrollArea className="w-full h-dvh bg-border">
       <div className="flex min-h-dvh w-full flex-col">
         {/* Cabeçalho compartilhado */}
-        <header className="hid-printable w-full mb-2 sm:mb-4 md:mb-6">
+        <header className="jornal-header w-full mb-2 sm:mb-4 md:mb-6">
           <Card className="w-full flex flex-col md:flex-row items-center justify-center gap-6 md:gap-16 p-4 sm:p-6">
             {/* Instituições */}
             <div className="flex flex-col items-center justify-start">

@@ -338,9 +338,10 @@
    ========================================= */
 
 @media print {
-  
-  .hid-printable {
-    display: hidden !important;
+
+  .column-screen-only,
+  header:has(h1.font-konkhmer-sleokchher) {
+    display: none !important;
   }
 
   .column-page {
@@ -427,5 +428,8 @@
   .column-qrcode-text :is(p, a) {
     font-size: 8pt !important;
     line-height: 1.3 !important;
+  }
+  .jornal-header {
+    display: none !important;
   }
 }
