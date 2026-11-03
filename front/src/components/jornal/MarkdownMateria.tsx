@@ -56,7 +56,7 @@ export function markdownParaHtml(content = "") {
   return String(conversorHtml.processSync(content));
 }
 
-export function resumoMateria(content = "") {
+export function resumo(content = "") {
   const primeiroParagrafo = content
     .replace(/\r\n/g, "\n")
     .split(/\n\s*\n/)
