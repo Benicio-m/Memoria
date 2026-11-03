@@ -559,10 +559,10 @@ function Home() {
                     <Button
                       type="button"
                       variant="outline"
-                      disabled={bloqueandoId === String(r._id)}
+                      disabled={bloqueandoId !== null}
                       onClick={() =>
                         handleAlterarStatusSala(
-                          String(r._id),
+                          String(r._id || r.id),
                           r.status === "bloqueada"
                             ? "aberta"
                             : "bloqueada"
@@ -570,7 +570,9 @@ function Home() {
                       }
                       className="ml-3 h-10 rounded-md text-base sm:text-lg"
                     >
-                      {r.status === "bloqueada" ? (
+                      {bloqueandoId === String(r._id || r.id) ? (
+                        "Salvando..."
+                      ) : r.status === "bloqueada" ? (
                         <>
                           <LockOpen className="mr-2 h-4 w-4" />
                           Desbloquear
