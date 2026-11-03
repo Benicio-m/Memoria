@@ -481,7 +481,7 @@ function Home() {
                       </h2>
                     </div>
 
-                    <Dialog open={openi} onOpenChange={(aberto) => setSalaAbertaId(aberto ? String(r._id || r.id) : null)}>
+                    <Dialog open={salaAbertaId === String(r._id || r.id)} onOpenChange={(aberto) => setSalaAbertaId(aberto ? String(r._id || r.id) : null)}>
                       <DialogTrigger className="text-center text-xl rounded-md hover:bg-border width-lg! p-1">Código: {r.code}</DialogTrigger>
 
                       <DialogContent className="rounded-md">

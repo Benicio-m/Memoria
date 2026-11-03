@@ -409,7 +409,6 @@ rooms.post("/", authMiddleware, async (c) => {
 });
 
 // Listar salas abertas do professor logado
-// Listar salas abertas do professor logado (com grupos e membros)
 rooms.get("/open", authMiddleware, async (c) => {
   try {
     await conectarMongo();
