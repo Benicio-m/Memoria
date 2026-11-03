@@ -7,10 +7,10 @@ import { InstagramLogoIcon, FacebookLogoIcon } from '@phosphor-icons/react'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Input } from '@/components/ui/input';
-import { CheckIcon, Link, Lock, LockOpen, Plus, XIcon } from 'lucide-react';
+import { CheckIcon, Lock, LockOpen, Plus, XIcon } from 'lucide-react';
 import { Avatar, AvatarImage } from '../components/ui/avatar';
 import { toast, Toaster } from '@/components/ui/toast';
-
+import { Link } from 'react-router';
 function Home() {
   const navigate = useNavigate();
   const [error, setError] = useState("")
