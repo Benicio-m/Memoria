@@ -419,7 +419,7 @@ rooms.get("/open", authMiddleware, async (c) => {
       return c.json({ ok: false, error: "Acesso restrito a professores" }, 403);
     }
 
-    const salas = await Room.find({ teachers: user.sub }).sort({ createdAt: -1 }).select("name code createdAt").populate("createdBy", "name profilePhoto").lean();
+    const salas = await Room.find().sort({ createdAt: -1 }).select("name code createdAt").populate("createdBy", "name profilePhoto").lean();
 
     const groups = await Group.find({ roomId: { $in: salas.map(r => r._id) } })
       .select("name members roomId status createdAt")
