@@ -527,7 +527,9 @@ function Home() {
                           )}
 
                           <div className="items-center justify-end gap-2">
-                            <Button className="w-25 h-10 mt-2 bg-green-600 hover:bg-green-700 text-accent-foreground rounded-md text-base sm:text-lg font-konkhmer-sleokchher" onClick={() => setOpeni(!openi)}>Ok</Button>
+                            <Button type="button" className="w-25 h-10 mt-2 bg-green-600 hover:bg-green-700 text-accent-foreground rounded-md text-base sm:text-lg font-konkhmer-sleokchher" onClick={() => setSalaAbertaId(null)}>
+                              Ok
+                            </Button>
                           </div>
                         </DialogHeader>
                       </DialogContent>
