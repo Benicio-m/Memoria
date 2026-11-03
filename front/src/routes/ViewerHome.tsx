@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import {
   Carousel,
   CarouselContent,
@@ -50,7 +51,7 @@ function resumo(content = "") {
     .replace(/~~(.*?)~~/g, "$1")
     // Remove código inline
     .replace(/`([^`]*)`/g, "$1")
-    // Remove diretivas de fonte, como :fonte{tamanho=3}
+    // Remove diretivas de fonte
     .replace(/:[a-zA-Z-]+\{[^}]*\}/g, "")
     // Remove citações
     .replace(/^>\s?/gm, "")
@@ -65,11 +66,19 @@ function resumo(content = "") {
     : texto;
 }
 
+function normalizarPesquisa(texto: string) {
+  return texto
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+}
+
 function ViewerHome() {
   const [highlights, setHighlights] = useState<Noticia[]>([]);
   const [allNews, setAllNews] = useState<Noticia[]>([]);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState("");
+  const [pesquisa, setPesquisa] = useState("");
 
   useEffect(() => {
     const controller = new AbortController();
@@ -97,13 +106,15 @@ function ViewerHome() {
 
         if (!resH.ok || !dataH.ok) {
           throw new Error(
-            dataH.error || "Não foi possível carregar os destaques."
+            dataH.error ||
+              "Não foi possível carregar os destaques."
           );
         }
 
         if (!resN.ok || !dataN.ok) {
           throw new Error(
-            dataN.error || "Não foi possível carregar as notícias."
+            dataN.error ||
+              "Não foi possível carregar as notícias."
           );
         }
 
@@ -148,23 +159,36 @@ function ViewerHome() {
     return () => controller.abort();
   }, []);
 
-  const porData = allNews.reduce<Record<string, Noticia[]>>(
-    (grupos, noticia) => {
-      const data = new Date(noticia.createdAt).toLocaleDateString(
-        "pt-BR",
-        { timeZone: "America/Sao_Paulo" }
-      );
+  const termoPesquisa = normalizarPesquisa(pesquisa.trim());
 
-      if (!grupos[data]) {
-        grupos[data] = [];
-      }
+  const noticiasFiltradas = allNews.filter((noticia) => {
+    const texto = normalizarPesquisa(
+      [
+        noticia.title,
+        noticia.subtitle || "",
+        noticia.authors,
+      ].join(" ")
+    );
 
-      grupos[data].push(noticia);
+    return texto.includes(termoPesquisa);
+  });
 
-      return grupos;
-    },
-    {}
-  );
+  const porData = noticiasFiltradas.reduce<
+    Record<string, Noticia[]>
+  >((grupos, noticia) => {
+    const data = new Date(noticia.createdAt).toLocaleDateString(
+      "pt-BR",
+      { timeZone: "America/Sao_Paulo" }
+    );
+
+    if (!grupos[data]) {
+      grupos[data] = [];
+    }
+
+    grupos[data].push(noticia);
+
+    return grupos;
+  }, {});
 
   return (
     <ScrollArea className="w-full h-dvh bg-border">
@@ -193,9 +217,12 @@ function ViewerHome() {
             </div>
 
             <div className="flex flex-col items-center justify-center text-center">
-              <h1 className="text-3xl sm:text-4xl font-normal font-konkhmer-sleokchher">
+              <Link
+                to="/"
+                className="text-3xl sm:text-4xl font-normal font-konkhmer-sleokchher"
+              >
                 Jornal Memória
-              </h1>
+              </Link>
 
               <h2 className="text-xl sm:text-2xl font-normal font-la-belle-aurore">
                 Tempo em letras
@@ -312,50 +339,88 @@ function ViewerHome() {
                     Notícias:
                   </h2>
 
-                  {Object.entries(porData).map(([data, noticias]) => (
-                    <div key={data}>
-                      <h3 className="text-lg mb-3">{data}</h3>
+                  {/* Pesquisa */}
+                  <div className="space-y-2">
+                    <label
+                      htmlFor="pesquisa-noticias"
+                      className="block text-sm"
+                    >
+                      Pesquisar notícias
+                    </label>
 
-                      <div className="space-y-4">
-                        {noticias.map((noticia) => (
-                          <Link
-                            to={`/noticia/${noticia._id}`}
-                            key={noticia._id}
-                            className="block"
-                          >
-                            <div className="flex items-start gap-4 rounded-md border p-3 sm:p-4 hover:bg-muted/50 transition-colors">
-                              {noticia.iconImage && (
-                                <img
-                                  src={noticia.iconImage}
-                                  alt=""
-                                  loading="lazy"
-                                  className="w-20 h-20 sm:w-28 sm:h-28 shrink-0 object-cover rounded-md"
-                                />
-                              )}
+                    <Input
+                      id="pesquisa-noticias"
+                      type="search"
+                      value={pesquisa}
+                      onChange={(event) =>
+                        setPesquisa(event.target.value)
+                      }
+                      placeholder="Busque por título, subtítulo ou autores..."
+                      className="w-full font-sans"
+                    />
 
-                              <div className="min-w-0 flex-1">
-                                <h4 className="text-lg sm:text-xl wrap-break-word">
-                                  {noticia.title}
-                                </h4>
+                    {pesquisa.trim() && (
+                      <p
+                        className="text-sm opacity-70"
+                        role="status"
+                        aria-live="polite"
+                      >
+                        {noticiasFiltradas.length} resultado(s)
+                        encontrado(s).
+                      </p>
+                    )}
+                  </div>
 
-                                <p className="text-sm opacity-70 mt-1">
-                                  Por: {noticia.authors}
-                                </p>
+                  {Object.entries(porData).map(
+                    ([data, noticias]) => (
+                      <div key={data}>
+                        <h3 className="text-lg mb-3">
+                          {data}
+                        </h3>
 
-                                <p className="text-sm mt-2 line-clamp-3 wrap-break-word">
-                                  {resumo(noticia.content)}
-                                </p>
+                        <div className="space-y-4">
+                          {noticias.map((noticia) => (
+                            <Link
+                              to={`/noticia/${noticia._id}`}
+                              key={noticia._id}
+                              className="block"
+                            >
+                              <div className="flex items-start gap-4 rounded-md border p-3 sm:p-4 hover:bg-muted/50 transition-colors">
+                                {noticia.iconImage && (
+                                  <img
+                                    src={noticia.iconImage}
+                                    alt=""
+                                    loading="lazy"
+                                    className="w-20 h-20 sm:w-28 sm:h-28 shrink-0 object-cover rounded-md"
+                                  />
+                                )}
+
+                                <div className="min-w-0 flex-1">
+                                  <h4 className="text-lg sm:text-xl wrap-break-word">
+                                    {noticia.title}
+                                  </h4>
+
+                                  <p className="text-sm opacity-70 mt-1">
+                                    Por: {noticia.authors}
+                                  </p>
+
+                                  <p className="text-sm mt-2 line-clamp-3 wrap-break-word">
+                                    {resumo(noticia.content)}
+                                  </p>
+                                </div>
                               </div>
-                            </div>
-                          </Link>
-                        ))}
+                            </Link>
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    )
+                  )}
 
-                  {allNews.length === 0 && (
+                  {noticiasFiltradas.length === 0 && (
                     <p className="text-sm opacity-70">
-                      Nenhuma notícia publicada ainda.
+                      {allNews.length === 0
+                        ? "Nenhuma notícia publicada ainda."
+                        : "Nenhuma notícia encontrada para essa pesquisa."}
                     </p>
                   )}
                 </section>
