@@ -171,9 +171,9 @@ function Column() {
           </div>
 
           <div className="flex flex-col items-center justify-center text-center">
-            <h1 className="text-3xl sm:text-4xl font-normal font-konkhmer-sleokchher">
+            <Link to="/" className="text-3xl sm:text-4xl font-normal font-konkhmer-sleokchher">
               Jornal Memória
-            </h1>
+            </Link>
 
             <h2 className="text-xl sm:text-2xl font-normal font-la-belle-aurore">
               Tempo em letras
@@ -443,10 +443,10 @@ function Column() {
               Créditos:
             </p>
             <ul className="list-disc list-inside text-left font-semibold font-sans font-300">
-              <li>Proposta: Professora Vânia e Professor Cláudio</li>
+              <li>Proposta: Professora Vânia Felix e Professor Cláudio Inacio do Nascimento</li>
               <li>Visuais: Professora Larissa Rocha Scaleti Lopes</li>
               <li>Matérias: Alunos escritores e redatores das turmas</li>
-              <li>Difusão: Nicole Campos de Carvalho, Pedro Henrique Boscolo Padua, </li>
+              <li>Difusão: Nicole Campos de Carvalho, Pedro Henrique Boscolo Padua, João Pedro Lezo, Lorena Possignolo Ghiraldi, Isabella Rufino de Oliveira, Vitor Emanuel Lopes de Reis</li>
               <li>Design e estrutura: Benício Motta Ramires</li>
             </ul>
           </div>

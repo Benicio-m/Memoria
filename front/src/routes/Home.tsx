@@ -7,7 +7,7 @@ import { InstagramLogoIcon, FacebookLogoIcon } from '@phosphor-icons/react'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Input } from '@/components/ui/input';
-import { CheckIcon, Lock, LockOpen, Plus, XIcon } from 'lucide-react';
+import { CheckIcon, Link, Lock, LockOpen, Plus, XIcon } from 'lucide-react';
 import { Avatar, AvatarImage } from '../components/ui/avatar';
 import { toast, Toaster } from '@/components/ui/toast';
 
@@ -228,7 +228,7 @@ function Home() {
 
       localStorage.removeItem("token")
       localStorage.removeItem("user")
-      navigate("/escrever")
+      navigate("/")
     }
   }
 
@@ -405,7 +405,7 @@ function Home() {
             </div>
 
             <div className="flex flex-col items-center justify-center text-center">
-              <h1 className="text-3xl sm:text-4xl font-normal font-konkhmer-sleokchher font-400 whitespace-nowrap">Jornal Memória</h1>
+              <Link to="/" className="text-3xl sm:text-4xl font-normal font-konkhmer-sleokchher font-400 whitespace-nowrap">Jornal Memória</Link>
               <h2 className="text-xl sm:text-2xl font-normal font-la-belle-aurore font-400">Tempo em letras</h2>
             </div>
 

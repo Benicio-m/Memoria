@@ -108,9 +108,9 @@ function JornalLayout({
 
             {/* Nome do jornal */}
             <div className="flex flex-col items-center justify-center text-center">
-              <h1 className="text-3xl sm:text-4xl font-normal font-konkhmer-sleokchher">
+              <Link to="/" className="text-3xl sm:text-4xl font-normal font-konkhmer-sleokchher">
                 Jornal Memória
-              </h1>
+              </Link>
 
               <h2 className="text-xl sm:text-2xl font-normal font-la-belle-aurore">
                 Tempo em letras
