@@ -338,9 +338,9 @@
    ========================================= */
 
 @media print {
-
-  .column-screen-only,
-  header:has(h1.font-konkhmer-sleokchher) {
+  /* Esconde apenas o cabeçalho do site e as ações da tela */
+  .jornal-header,
+  .column-screen-only {
     display: none !important;
   }
 
@@ -428,8 +428,5 @@
   .column-qrcode-text :is(p, a) {
     font-size: 8pt !important;
     line-height: 1.3 !important;
-  }
-  .jornal-header {
-    display: none !important;
   }
 }
