@@ -54,7 +54,14 @@ function Write() {
       const text = await res.text();
 
       let data: any = {};
-
+      if(res.status === 403) {
+        toast.add({
+          title: "Erro",
+          description: "Sala bloqueada pelo professor",
+          type: "error",
+        });
+        return
+      }
       try {
         data = text ? JSON.parse(text) : {};
       } catch {
