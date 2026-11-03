@@ -56,7 +56,7 @@ export function markdownParaHtml(content = "") {
   return String(conversorHtml.processSync(content));
 }
 
-export function resumo(content = "") {
+export function resumoMateria(content = "") {
   const primeiroParagrafo = content
     .replace(/\r\n/g, "\n")
     .split(/\n\s*\n/)
@@ -74,10 +74,13 @@ export function resumo(content = "") {
     .replace(/!\[[^\]]*\]\([^)]*\)/g, "")
     // Remove links, mantendo apenas o texto
     .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
-    // Remove formatação de negrito, itálico, tachado e código
+    // Remove negrito
     .replace(/(\*\*|__)(.*?)\1/g, "$2")
+    // Remove itálico
     .replace(/(\*|_)(.*?)\1/g, "$2")
+    // Remove tachado
     .replace(/~~(.*?)~~/g, "$1")
+    // Remove código inline
     .replace(/`([^`]*)`/g, "$1")
     // Remove diretivas de fonte, como :fonte{tamanho=3}
     .replace(/:[a-zA-Z-]+\{[^}]*\}/g, "")

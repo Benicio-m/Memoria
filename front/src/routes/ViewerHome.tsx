@@ -38,10 +38,25 @@ function resumo(content = "") {
   if (!primeiroParagrafo) return "";
 
   const texto = primeiroParagrafo
+    // Remove imagens
     .replace(/!\[[^\]]*\]\([^)]*\)/g, "")
+    // Remove links, mantendo apenas o texto
     .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
-    .replace(/[*_~`]/g, "")
+    // Remove negrito
+    .replace(/(\*\*|__)(.*?)\1/g, "$2")
+    // Remove itálico
+    .replace(/(\*|_)(.*?)\1/g, "$2")
+    // Remove tachado
+    .replace(/~~(.*?)~~/g, "$1")
+    // Remove código inline
+    .replace(/`([^`]*)`/g, "$1")
+    // Remove diretivas de fonte, como :fonte{tamanho=3}
+    .replace(/:[a-zA-Z-]+\{[^}]*\}/g, "")
+    // Remove citações
     .replace(/^>\s?/gm, "")
+    // Remove caracteres Markdown restantes
+    .replace(/[*_~`#]/g, "")
+    // Normaliza espaços
     .replace(/\s+/g, " ")
     .trim();
 

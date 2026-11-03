@@ -9,7 +9,7 @@ import {
   InstagramLogoIcon,
 } from "@phosphor-icons/react";
 
-import { resumo } from "./MarkdownMateria";
+import { resumoMateria } from "./MarkdownMateria";
 
 export type Noticia = {
   _id: string;
@@ -68,7 +68,7 @@ export function CardNoticia({
           </time>
 
           <p className="font-sans text-sm mt-2 line-clamp-3 wrap-break-word">
-            {resumo(noticia.content || "")}
+            {resumoMateria(noticia.content || "")}
           </p>
         </div>
       </div>
