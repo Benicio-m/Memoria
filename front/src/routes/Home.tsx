@@ -21,6 +21,7 @@ function Home() {
   const [pendingGroups, setPendingGroups] = useState<any[]>([])
   const [professor, setProfessor] = useState<any>(null)
   const [bloqueandoId, setBloqueandoId] = useState<string | null>(null)
+  const [salaAbertaId, setSalaAbertaId] = useState<string | null>(null)
 
   type User = {
     id: string;
@@ -480,7 +481,7 @@ function Home() {
                       </h2>
                     </div>
 
-                    <Dialog open={openi} onOpenChange={setOpeni}>
+                    <Dialog open={openi} onOpenChange={(aberto) => setSalaAbertaId(aberto ? String(r._id || r.id) : null)}>
                       <DialogTrigger className="text-center text-xl rounded-md hover:bg-border width-lg! p-1">Código: {r.code}</DialogTrigger>
 
                       <DialogContent className="rounded-md">
