@@ -437,18 +437,76 @@ function Column() {
         </div>
       </main>
       <footer className="hid-printable w-full mt-6 mb-0 font-konkhmer-sleokchher">
-        <Card className="w-full flex flex-col md:flex-row items-center justify-center gap-6 md:gap-16 p-4 sm:p-6">
-          <div className="flex flex-col items-center justify-start">
-            <p className="font-konkhmer-sleokchher text-lg font-normal">
+        <Card className="w-full p-4 sm:p-6">
+          <div className="w-full min-w-0">
+            <h2 className="text-lg font-normal mb-4">
               Créditos:
-            </p>
-            <ul className="list-disc list-inside text-left font-semibold font-sans font-300">
-              <li>Proposta: Professora Vânia Felix e Professor Cláudio Inacio do Nascimento</li>
-              <li>Visuais: Professora Larissa Rocha Scaleti Lopes</li>
-              <li>Matérias: Alunos escritores e redatores das turmas</li>
-              <li>Difusão: Nicole Campos de Carvalho, Pedro Henrique Boscolo Padua, João Pedro Lezo, Lorena Possignolo Ghiraldi, Isabella Rufino de Oliveira, Vitor Emanuel Lopes de Reis, Maria Eduarda Pimenta Rocha</li>
-              <li>Design e estrutura: Benício Motta Ramires</li>
-            </ul>
+            </h2>
+
+            <div
+              className="grid gap-6"
+              style={{
+                gridTemplateColumns:
+                  "repeat(auto-fit, minmax(min(100%, 220px), 1fr))",
+              }}
+            >
+              <section className="min-w-0">
+                <h3 className="text-sm mb-2">
+                  Proposta
+                </h3>
+
+                <ul className="list-disc pl-5 space-y-1 text-left text-sm font-sans font-normal wrap-break-word">
+                  <li>Professora Vânia Felix</li>
+                  <li>Professor Cláudio Inacio do Nascimento</li>
+                </ul>
+              </section>
+
+              <section className="min-w-0">
+                <h3 className="text-sm mb-2">
+                  Visuais
+                </h3>
+
+                <ul className="list-disc pl-5 space-y-1 text-left text-sm font-sans font-normal wrap-break-word">
+                  <li>Professora Larissa Rocha Scaleti Lopes</li>
+                </ul>
+              </section>
+
+              <section className="min-w-0">
+                <h3 className="text-sm mb-2">
+                  Matérias
+                </h3>
+
+                <ul className="list-disc pl-5 space-y-1 text-left text-sm font-sans font-normal wrap-break-word">
+                  <li>Alunos escritores e redatores das turmas</li>
+                </ul>
+              </section>
+
+              <section className="min-w-0">
+                <h3 className="text-sm mb-2">
+                  Difusão
+                </h3>
+
+                <ul className="list-disc pl-5 space-y-1 text-left text-sm font-sans font-normal wrap-break-word">
+                  <li>Nicole Campos de Carvalho</li>
+                  <li>Pedro Henrique Boscolo Padua</li>
+                  <li>João Pedro Lezo</li>
+                  <li>Lorena Possignolo Ghiraldi</li>
+                  <li>Isabella Rufino de Oliveira</li>
+                  <li>Vitor Emanuel Lopes de Reis</li>
+                  <li>Maria Eduarda Pimenta Rocha</li>
+                </ul>
+              </section>
+
+              <section className="min-w-0">
+                <h3 className="text-sm mb-2">
+                  Design e estrutura
+                </h3>
+
+                <ul className="list-disc pl-5 space-y-1 text-left text-sm font-sans font-normal wrap-break-word">
+                  <li>Benício Motta Ramires</li>
+                </ul>
+              </section>
+            </div>
           </div>
         </Card>
       </footer>
