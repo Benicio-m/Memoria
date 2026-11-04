@@ -447,7 +447,7 @@ function ViewerHome() {
                     Proposta
                   </h3>
 
-                  <ul className="list-disc pl-5 space-y-1 text-left text-sm font-sans font-normal break-words">
+                  <ul className="list-disc pl-5 space-y-1 text-left text-sm font-sans font-normal wrap-break-word">
                     <li>Professora Vânia Felix</li>
                     <li>Professor Cláudio Inacio do Nascimento</li>
                   </ul>
@@ -458,7 +458,7 @@ function ViewerHome() {
                     Visuais
                   </h3>
 
-                  <ul className="list-disc pl-5 space-y-1 text-left text-sm font-sans font-normal break-words">
+                  <ul className="list-disc pl-5 space-y-1 text-left text-sm font-sans font-normal wrap-break-word">
                     <li>Professora Larissa Rocha Scaleti Lopes</li>
                   </ul>
                 </section>
@@ -468,7 +468,7 @@ function ViewerHome() {
                     Matérias
                   </h3>
 
-                  <ul className="list-disc pl-5 space-y-1 text-left text-sm font-sans font-normal break-words">
+                  <ul className="list-disc pl-5 space-y-1 text-left text-sm font-sans font-normal wrap-break-word">
                     <li>Alunos escritores e redatores das turmas</li>
                   </ul>
                 </section>
@@ -478,7 +478,7 @@ function ViewerHome() {
                     Difusão
                   </h3>
 
-                  <ul className="list-disc pl-5 space-y-1 text-left text-sm font-sans font-normal break-words">
+                  <ul className="list-disc pl-5 space-y-1 text-left text-sm font-sans font-normal wrap-break-word">
                     <li>Nicole Campos de Carvalho</li>
                     <li>Pedro Henrique Boscolo Padua</li>
                     <li>João Pedro Lezo</li>
@@ -494,7 +494,7 @@ function ViewerHome() {
                     Design e estrutura
                   </h3>
 
-                  <ul className="list-disc pl-5 space-y-1 text-left text-sm font-sans font-normal break-words">
+                  <ul className="list-disc pl-5 space-y-1 text-left text-sm font-sans font-normal wrap-break-word">
                     <li>Benício Motta Ramires</li>
                   </ul>
                 </section>
