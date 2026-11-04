@@ -431,7 +431,7 @@ function ViewerHome() {
         <footer className="hid-printable w-full mt-6 mb-0 font-konkhmer-sleokchher">
           <Card className="w-full p-4 sm:p-6">
             <div className="w-full min-w-0">
-              <h2 className="text-lg font-normal mb-4">
+              <h2 className="text-lg font-normal mb-4 text-center">
                 Créditos:
               </h2>
 
