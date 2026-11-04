@@ -502,22 +502,6 @@ function ViewerHome() {
             </div>
           </Card>
         </footer>
-        <footer className="hid-printable w-full mt-6 mb-0 font-konkhmer-sleokchher">
-          <Card className="w-full flex flex-col md:flex-row items-center justify-center gap-6 md:gap-16 p-4 sm:p-6">
-            <div className="flex flex-col items-center justify-start">
-              <p className="font-konkhmer-sleokchher text-lg font-normal">
-                Créditos:
-              </p>
-              <ul className="list-disc list-inside text-left font-semibold font-sans font-300">
-                <li>Proposta: Professora Vânia Felix e Professor Cláudio Inacio do Nascimento</li>
-                <li>Visuais: Professora Larissa Rocha Scaleti Lopes</li>
-                <li>Matérias: Alunos escritores e redatores das turmas</li>
-                <li>Difusão: Nicole Campos de Carvalho, Pedro Henrique Boscolo Padua, João Pedro Lezo, Lorena Possignolo Ghiraldi, Isabella Rufino de Oliveira, Vitor Emanuel Lopes de Reis, Maria Eduarda Pimenta Rocha</li>
-                <li>Design e estrutura: Benício Motta Ramires</li>
-              </ul>
-            </div>
-          </Card>
-        </footer>
       </div>
     </ScrollArea>
   );
