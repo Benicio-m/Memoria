@@ -708,7 +708,7 @@ function Home() {
                   </div>
                 ))}
               </div>
-              <div className="ml-8! flex flex-wrap items-center justify-between gap-4 w-full">
+              <div className="flex flex-col flex-1 w-full items-start justify-center ml-8! font-konkhmer-sleokchher font-400 font-normal p-0">
                 <h1 className="text-xl sm:text-2xl md:text-4xl">
                   Minhas matérias
                 </h1>
