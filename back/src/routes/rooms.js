@@ -489,10 +489,9 @@ rooms.post("/news", authMiddleware, async (c) => {
       );
     }
 
-    let roomId;
-    let authorId = user.sub;
-    let authorRole = user.role;
-    let authors;
+    let roomId = null;
+    let groupId = null;
+    let authors = "";
 
     if (user.role === "aluno") {
       const group = await Group.findById(user.sub);
@@ -505,6 +504,7 @@ rooms.post("/news", authMiddleware, async (c) => {
       }
 
       roomId = group.roomId;
+      groupId = group._id;
       authors = group.name;
     }
 
@@ -518,25 +518,13 @@ rooms.post("/news", authMiddleware, async (c) => {
         );
       }
 
-      const room = await Room.findOne({
-        teachers: user.sub,
-      }).sort({ createdAt: -1 });
-
-      if (!room) {
-        return c.json(
-          {
-            error:
-              "Você precisa estar vinculado a uma sala para publicar.",
-          },
-          400
-        );
-      }
-
-      roomId = room._id;
       authors = teacher.name;
     }
 
-    if (!roomId) {
+    if (
+      user.role !== "aluno" &&
+      user.role !== "professor"
+    ) {
       return c.json(
         { error: "Tipo de usuário inválido" },
         403
@@ -545,10 +533,9 @@ rooms.post("/news", authMiddleware, async (c) => {
 
     const news = await News.create({
       roomId,
-      groupId:
-        user.role === "aluno" ? user.sub : null,
-      authorId,
-      authorRole,
+      groupId,
+      authorId: user.sub,
+      authorRole: user.role,
       authors,
       title,
       subtitle: subtitle || "",
