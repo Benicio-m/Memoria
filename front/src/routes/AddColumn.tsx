@@ -3,26 +3,21 @@ import type { ChangeEvent } from "react";
 import { useNavigate, useParams } from "react-router";
 import { ArrowLeft, Save, Trash } from "lucide-react";
 
-
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 
-
 import JornalLayout from "@/components/jornal/JornalLayout";
 import type { Noticia } from "@/components/jornal/JornalLayout";
-
 
 import EditorMateria from "@/components/jornal/EditorMateria";
 import MarkdownMateria, {
   markdownParaHtml,
 } from "@/components/jornal/MarkdownMateria";
 
-
 function AddColumn() {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
-
 
   const [titulo, setTitulo] = useState("");
   const [subtitulo, setSubtitulo] = useState("");
@@ -30,8 +25,11 @@ function AddColumn() {
   const [conteudoInicial, setConteudoInicial] = useState("");
   const [corpoVazio, setCorpoVazio] = useState(true);
   const [imagem, setImagem] = useState("");
-  const [grupo, setGrupo] = useState("");
+  const [autor, setAutor] = useState("");
 
+  const [perfil, setPerfil] = useState<
+    "aluno" | "professor" | null
+  >(null);
 
   const [mostrarPrevia, setMostrarPrevia] = useState(false);
   const [carregando, setCarregando] = useState(true);
@@ -40,25 +38,26 @@ function AddColumn() {
   const [lendoImagem, setLendoImagem] = useState(false);
   const [erro, setErro] = useState("");
 
+  const paginaRetorno =
+    perfil === "professor"
+      ? "/professor/home"
+      : "/aluno";
 
   useEffect(() => {
     const controller = new AbortController();
 
-
     async function carregar() {
       setCarregando(true);
       setErro("");
-      setGrupo("");
-
+      setAutor("");
+      setPerfil(null);
 
       const token = localStorage.getItem("token");
-
 
       if (!token) {
         navigate("/escrever", { replace: true });
         return;
       }
-
 
       try {
         const response = await fetch(
@@ -71,34 +70,31 @@ function AddColumn() {
           }
         );
 
-
         const data = await response.json();
 
+        if (response.status === 401) {
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          navigate("/escrever", { replace: true });
+          return;
+        }
+
+        if (!response.ok || !data.ok || !data.user) {
+          throw new Error(
+            data.error ||
+              "Não foi possível verificar seu login."
+          );
+        }
 
         if (
-          response.status === 401 ||
-          response.status === 403
+          data.user.role !== "aluno" &&
+          data.user.role !== "professor"
         ) {
           navigate("/escrever", { replace: true });
           return;
         }
 
-
-        if (!response.ok || !data.ok || !data.user) {
-          throw new Error(
-            data.error || "Não foi possível verificar seu login."
-          );
-        }
-
-
-        if (data.user.role !== "aluno") {
-          navigate("/home", { replace: true });
-          return;
-        }
-
-
         let noticia: Noticia | undefined;
-
 
         if (id) {
           const res = await fetch(
@@ -111,9 +107,7 @@ function AddColumn() {
             }
           );
 
-
           const resultado = await res.json();
-
 
           if (!res.ok || !resultado.ok) {
             throw new Error(
@@ -122,59 +116,48 @@ function AddColumn() {
             );
           }
 
-
           const noticias: Noticia[] =
             Array.isArray(resultado.news)
               ? resultado.news
               : [];
 
-
           noticia = noticias.find(
             (item) => item._id === id
           );
 
-
           if (!noticia) {
             throw new Error(
-              "Essa matéria não foi encontrada no seu grupo."
+              "Essa matéria não foi encontrada entre suas publicações."
             );
           }
         }
 
-
         if (controller.signal.aborted) return;
 
-
         const conteudo = noticia?.content || "";
-
 
         const documento = new DOMParser().parseFromString(
           markdownParaHtml(conteudo),
           "text/html"
         );
 
-
         setTitulo(noticia?.title || "");
         setSubtitulo(noticia?.subtitle || "");
         setImagem(noticia?.iconImage || "");
 
-
         setCorpo(conteudo);
         setConteudoInicial(conteudo);
-
 
         setCorpoVazio(
           !documento.body.textContent?.trim()
         );
 
-
-        setGrupo(data.user.name);
+        setPerfil(data.user.role);
+        setAutor(data.user.name);
       } catch (error) {
         if (controller.signal.aborted) return;
 
-
         console.error("Erro ao carregar editor:", error);
-
 
         setErro(
           error instanceof Error
@@ -188,32 +171,25 @@ function AddColumn() {
       }
     }
 
-
     carregar();
-
 
     return () => controller.abort();
   }, [id, navigate]);
-
 
   function selecionarImagem(
     event: ChangeEvent<HTMLInputElement>
   ) {
     const arquivo = event.target.files?.[0];
 
-
     if (!arquivo) return;
 
-
     setErro("");
-
 
     const tipos = [
       "image/jpeg",
       "image/png",
       "image/webp",
     ];
-
 
     if (
       !tipos.includes(arquivo.type) ||
@@ -226,57 +202,44 @@ function AddColumn() {
       return;
     }
 
-
     setLendoImagem(true);
 
-
     const reader = new FileReader();
-
 
     reader.onload = () => {
       if (typeof reader.result === "string") {
         setImagem(reader.result);
       }
 
-
       setLendoImagem(false);
     };
-
 
     reader.onerror = () => {
       setErro("Não foi possível ler a imagem.");
       setLendoImagem(false);
     };
 
-
     reader.readAsDataURL(arquivo);
   }
-
 
   async function salvar() {
     if (salvando || deletando || lendoImagem) return;
 
-
     setErro("");
-
 
     if (!titulo.trim() || corpoVazio) {
       setErro("Preencha o título e o corpo da matéria.");
       return;
     }
 
-
     const token = localStorage.getItem("token");
-
 
     if (!token) {
       navigate("/escrever", { replace: true });
       return;
     }
 
-
     setSalvando(true);
-
 
     try {
       const response = await fetch(
@@ -298,9 +261,7 @@ function AddColumn() {
         }
       );
 
-
       const data = await response.json();
-
 
       if (!response.ok || !data.ok) {
         throw new Error(
@@ -308,11 +269,9 @@ function AddColumn() {
         );
       }
 
-
-      navigate("/aluno");
+      navigate(paginaRetorno);
     } catch (error) {
       console.error("Erro ao salvar matéria:", error);
-
 
       setErro(
         error instanceof Error
@@ -324,33 +283,26 @@ function AddColumn() {
     }
   }
 
-
   async function excluir() {
     if (!id || deletando || salvando || lendoImagem) {
       return;
     }
 
-
     const token = localStorage.getItem("token");
-
 
     if (!token) {
       navigate("/escrever", { replace: true });
       return;
     }
 
-
     const confirmou = window.confirm(
       "Tem certeza que deseja excluir esta matéria? Esta ação não pode ser desfeita."
     );
 
-
     if (!confirmou) return;
-
 
     setDeletando(true);
     setErro("");
-
 
     try {
       const response = await fetch(
@@ -363,9 +315,7 @@ function AddColumn() {
         }
       );
 
-
       const data = await response.json();
-
 
       if (!response.ok || !data.ok) {
         throw new Error(
@@ -373,11 +323,9 @@ function AddColumn() {
         );
       }
 
-
-      navigate("/aluno");
+      navigate(paginaRetorno);
     } catch (error) {
       console.error("Erro ao excluir matéria:", error);
-
 
       setErro(
         error instanceof Error
@@ -389,10 +337,8 @@ function AddColumn() {
     }
   }
 
-
   const bloqueado =
-    carregando || salvando || deletando || !grupo;
-
+    carregando || salvando || deletando || !autor;
 
   return (
     <JornalLayout>
@@ -403,26 +349,23 @@ function AddColumn() {
               {id ? "Editar matéria" : "Adicionar matéria"}
             </h2>
 
-
-            {grupo && (
+            {autor && (
               <p className="text-sm opacity-70 mt-2 wrap-break-word">
-                Autores: {grupo}
+                Autor: {autor}
               </p>
             )}
           </div>
-
 
           <Button
             type="button"
             variant="outline"
             disabled={salvando || deletando}
-            onClick={() => navigate("/aluno")}
+            onClick={() => navigate(paginaRetorno)}
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
             Voltar
           </Button>
         </div>
-
 
         {carregando ? (
           <p className="py-6" role="status">
@@ -441,7 +384,6 @@ function AddColumn() {
                 Título da matéria
               </label>
 
-
               <Input
                 id="titulo"
                 value={titulo}
@@ -454,12 +396,10 @@ function AddColumn() {
               />
             </div>
 
-
             <div className="space-y-2">
               <label htmlFor="subtitulo">
                 Subtítulo (opcional)
               </label>
-
 
               <Input
                 id="subtitulo"
@@ -472,12 +412,10 @@ function AddColumn() {
               />
             </div>
 
-
             <div className="space-y-3">
               <label htmlFor="icone">
                 Imagem de ícone da matéria
               </label>
-
 
               <Input
                 id="icone"
@@ -487,18 +425,15 @@ function AddColumn() {
                 disabled={bloqueado || lendoImagem}
               />
 
-
               <p className="text-xs opacity-70">
                 JPG, PNG ou WebP de até 500 KB.
               </p>
-
 
               {lendoImagem && (
                 <p className="text-sm" role="status">
                   Preparando imagem...
                 </p>
               )}
-
 
               {imagem && (
                 <div className="flex items-center gap-3">
@@ -507,7 +442,6 @@ function AddColumn() {
                     alt="Prévia do ícone da matéria"
                     className="h-24 w-24 rounded-md border object-cover"
                   />
-
 
                   <Button
                     type="button"
@@ -521,11 +455,9 @@ function AddColumn() {
               )}
             </div>
 
-
             <section className="space-y-3">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <h3>Corpo da matéria</h3>
-
 
                 <Button
                   type="button"
@@ -541,8 +473,7 @@ function AddColumn() {
                 </Button>
               </div>
 
-
-              {grupo && (
+              {autor && (
                 <EditorMateria
                   key={id || "nova-materia"}
                   initialContent={conteudoInicial}
@@ -554,7 +485,6 @@ function AddColumn() {
                 />
               )}
 
-
               <p className="text-xs opacity-70">
                 Selecione um trecho para formatá-lo.
                 Sem seleção, a formatação vale para o
@@ -562,13 +492,11 @@ function AddColumn() {
               </p>
             </section>
 
-
             {mostrarPrevia && (
               <section className="rounded-md border p-4 sm:p-6">
                 <h3 className="text-lg mb-4">
                   Prévia da publicação
                 </h3>
-
 
                 {corpoVazio ? (
                   <p className="text-sm opacity-70">
@@ -580,7 +508,6 @@ function AddColumn() {
               </section>
             )}
 
-
             {erro && (
               <p
                 className="text-sm text-red-600"
@@ -589,7 +516,6 @@ function AddColumn() {
                 {erro}
               </p>
             )}
-
 
             <div className="flex flex-wrap justify-end gap-3 border-t pt-4">
               {id && (
@@ -601,23 +527,20 @@ function AddColumn() {
                 >
                   <Trash className="h-4 w-4 mr-2" />
 
-
                   {deletando
                     ? "Excluindo..."
                     : "Excluir matéria"}
                 </Button>
               )}
 
-
               <Button
                 type="button"
                 variant="outline"
                 disabled={salvando || deletando}
-                onClick={() => navigate("/aluno")}
+                onClick={() => navigate(paginaRetorno)}
               >
                 Cancelar
               </Button>
-
 
               <Button
                 type="submit"
@@ -625,7 +548,6 @@ function AddColumn() {
                 className="bg-green-600 hover:bg-green-700 text-white"
               >
                 <Save className="h-4 w-4 mr-2" />
-
 
                 {salvando
                   ? "Salvando..."
@@ -640,6 +562,5 @@ function AddColumn() {
     </JornalLayout>
   );
 }
-
 
 export default AddColumn;
