@@ -719,7 +719,7 @@ function Home() {
                   className="h-10 bg-green-600 hover:bg-green-700 text-accent-foreground rounded-md text-base sm:text-lg"
                   onClick={() => navigate("/adicionar-coluna")}
                 >
-                  <Pencil className="mr-2 h-4 w-4" />
+                  <Pencil className="h-4 w-4" />
                 </Button>
               </div>
 
