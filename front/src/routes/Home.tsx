@@ -7,15 +7,33 @@ import { InstagramLogoIcon, FacebookLogoIcon } from '@phosphor-icons/react'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Input } from '@/components/ui/input';
-import { CheckIcon, Lock, LockOpen, Plus, XIcon } from 'lucide-react';
+import { CheckIcon, Lock, LockOpen, Plus, Trash, XIcon } from 'lucide-react';
 import { Avatar, AvatarImage } from '../components/ui/avatar';
 import { toast, Toaster } from '@/components/ui/toast';
 import { Link } from 'react-router';
+
+type User = {
+  id: string;
+  name: string;
+  email: string;
+  role: "professor" | "aluno";
+  profilePhoto?: string;
+  roomId?: string;
+};
+
+type Noticia = {
+  _id: string;
+  title: string;
+  subtitle?: string;
+  authors: string;
+  createdAt: string;
+};
+
 function Home() {
   const navigate = useNavigate();
+
   const [error, setError] = useState("")
   const [open, setOpen] = useState(false)
-  const [openi, setOpeni] = useState(false)
   const [roomName, setRoomName] = useState("")
   const [gottenRooms, setGottenRooms] = useState<any[]>([])
   const [pendingGroups, setPendingGroups] = useState<any[]>([])
@@ -23,17 +41,12 @@ function Home() {
   const [bloqueandoId, setBloqueandoId] = useState<string | null>(null)
   const [salaAbertaId, setSalaAbertaId] = useState<string | null>(null)
 
-  type User = {
-    id: string;
-    name: string;
-    email: string;
-    role: "professor" | "aluno";
-    profilePhoto?: string;
-    roomId?: string;
-  };
-
   const [user, setUser] = useState<User | null>(null);
   const [allGroups, setAllGroups] = useState<any[]>([]);
+
+  const [minhasMaterias, setMinhasMaterias] = useState<Noticia[]>([]);
+  const [carregandoMaterias, setCarregandoMaterias] = useState(true);
+  const [excluindoId, setExcluindoId] = useState<string | null>(null);
 
   async function handleAutorizar(
     salaId: string,
@@ -210,6 +223,68 @@ function Home() {
     }
   }
 
+  async function handleExcluirMateria(id: string) {
+    if (!id || excluindoId) return;
+
+    const confirmou = window.confirm(
+      "Tem certeza que deseja excluir esta matéria? Esta ação não pode ser desfeita."
+    );
+
+    if (!confirmou) return;
+
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      setError("Sua sessão expirou. Entre novamente.");
+      return;
+    }
+
+    setExcluindoId(id);
+    setError("");
+
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/rooms/news/${id}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok || !data?.ok) {
+        throw new Error(
+          data?.error || "Erro ao excluir a matéria."
+        );
+      }
+
+      setMinhasMaterias((materias) =>
+        materias.filter(
+          (materia) => String(materia._id) !== String(id)
+        )
+      );
+
+      toast.add({
+        title: "Matéria excluída",
+        description: "A matéria foi removida com sucesso.",
+        type: "success",
+      });
+    } catch (err) {
+      console.error("Erro ao excluir matéria:", err);
+
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Erro de conexão ao excluir a matéria."
+      );
+    } finally {
+      setExcluindoId(null);
+    }
+  }
+
   function getLoggedUser(): User | null {
     const stored = localStorage.getItem("user");
 
@@ -310,9 +385,6 @@ function Home() {
 
         const text = await response.text();
 
-        console.log("Status:", response.status);
-        console.log("Resposta bruta:", text);
-
         let data: any = null;
 
         try {
@@ -401,10 +473,59 @@ function Home() {
     verificarLogado();
   }, [navigate]);
 
+  useEffect(() => {
+    async function pegarMinhasMaterias() {
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        navigate("/escrever");
+        return;
+      }
+
+      setCarregandoMaterias(true);
+      setError("");
+
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/rooms/news/mine`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok || !data?.ok) {
+          throw new Error(
+            data?.error || "Erro ao carregar suas matérias."
+          );
+        }
+
+        setMinhasMaterias(
+          Array.isArray(data.news) ? data.news : []
+        );
+      } catch (err) {
+        console.error("Erro ao carregar matérias:", err);
+
+        setError(
+          err instanceof Error
+            ? err.message
+            : "Erro de conexão ao carregar matérias."
+        );
+      } finally {
+        setCarregandoMaterias(false);
+      }
+    }
+
+    pegarMinhasMaterias();
+  }, [navigate]);
+
   return (
     <ScrollArea className="w-full h-dvh bg-border">
       <Toaster />
-      
+
       <div className="flex flex-col h-full min-h-dvh w-full">
         <div className="w-full bg-border mt-0 mb-2 sm:mb-4 md:mb-6">
           <Card className="w-full flex flex-col md:flex-row items-center justify-center gap-6 md:gap-16 p-4 sm:p-6">
@@ -587,6 +708,106 @@ function Home() {
                   </div>
                 ))}
               </div>
+            </Card>
+
+            <Card className="flex flex-col items-start justify-start shadow-accent-foreground shadow-md w-full max-w-7xl p-4 sm:p-6 mt-4 rounded-md">
+              <div className="flex flex-wrap items-center justify-between gap-4 w-full">
+                <h1 className="text-xl sm:text-2xl md:text-4xl">
+                  Minhas matérias
+                </h1>
+
+                <Button
+                  type="button"
+                  className="h-10 bg-green-600 hover:bg-green-700 text-accent-foreground rounded-md text-base sm:text-lg"
+                  onClick={() => navigate("/adicionar-coluna")}
+                >
+                  <Plus className="mr-2 h-4 w-4" />
+                  Escrever matéria
+                </Button>
+              </div>
+
+              {carregandoMaterias ? (
+                <p className="mt-6 text-base opacity-70" role="status">
+                  Carregando suas matérias...
+                </p>
+              ) : minhasMaterias.length === 0 ? (
+                <p className="mt-6 text-base opacity-70">
+                  Você ainda não escreveu nenhuma matéria.
+                </p>
+              ) : (
+                <ul className="mt-6 w-full space-y-3">
+                  {minhasMaterias.map((materia) => (
+                    <li
+                      key={materia._id}
+                      className="flex flex-wrap items-center justify-between gap-3 rounded-md border p-3 sm:p-4"
+                    >
+                      <div className="min-w-0">
+                        <h2 className="text-lg sm:text-xl break-words">
+                          {materia.title}
+                        </h2>
+
+                        {materia.subtitle && (
+                          <p className="text-sm opacity-70 break-words">
+                            {materia.subtitle}
+                          </p>
+                        )}
+
+                        <p className="text-xs opacity-70 mt-1">
+                          Publicada em{" "}
+                          {new Date(
+                            materia.createdAt
+                          ).toLocaleDateString("pt-BR")}
+                        </p>
+                      </div>
+
+                      <div className="flex flex-wrap items-center gap-2">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() =>
+                            navigate(
+                              `/noticia/${materia._id}`
+                            )
+                          }
+                        >
+                          Ver
+                        </Button>
+
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() =>
+                            navigate(
+                              `/adicionar-coluna/${materia._id}`
+                            )
+                          }
+                        >
+                          Editar
+                        </Button>
+
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          disabled={
+                            excluindoId === materia._id
+                          }
+                          onClick={() =>
+                            handleExcluirMateria(
+                              materia._id
+                            )
+                          }
+                        >
+                          <Trash className="mr-2 h-4 w-4" />
+
+                          {excluindoId === materia._id
+                            ? "Excluindo..."
+                            : "Excluir"}
+                        </Button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </Card>
           </div>
         </div>

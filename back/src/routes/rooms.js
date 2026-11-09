@@ -473,26 +473,83 @@ rooms.patch("/:roomId/status", authMiddleware, async (c) => {
 
 // ─────────── NOTÍCIAS ───────────
 
-// Criar notícia (aluno logado)
+// Criar notícia (grupo autorizado ou professor)
 rooms.post("/news", authMiddleware, async (c) => {
   try {
     await conectarMongo();
+
     const user = c.get("user");
-    const { title, subtitle, content, iconImage } = await c.req.json();
+    const { title, subtitle, content, iconImage } =
+      await c.req.json();
 
     if (!title || !content) {
-      return c.json({ error: "Informe título e conteúdo" }, 400);
+      return c.json(
+        { error: "Informe título e conteúdo" },
+        400
+      );
     }
 
-    const group = await Group.findById(user.sub);
-    if (!group || group.status !== "autorizado") {
-      return c.json({ error: "Grupo não autorizado" }, 403);
+    let roomId;
+    let authorId = user.sub;
+    let authorRole = user.role;
+    let authors;
+
+    if (user.role === "aluno") {
+      const group = await Group.findById(user.sub);
+
+      if (!group || group.status !== "autorizado") {
+        return c.json(
+          { error: "Grupo não autorizado" },
+          403
+        );
+      }
+
+      roomId = group.roomId;
+      authors = group.name;
+    }
+
+    if (user.role === "professor") {
+      const teacher = await Teacher.findById(user.sub);
+
+      if (!teacher) {
+        return c.json(
+          { error: "Professor não encontrado" },
+          404
+        );
+      }
+
+      const room = await Room.findOne({
+        teachers: user.sub,
+      }).sort({ createdAt: -1 });
+
+      if (!room) {
+        return c.json(
+          {
+            error:
+              "Você precisa estar vinculado a uma sala para publicar.",
+          },
+          400
+        );
+      }
+
+      roomId = room._id;
+      authors = teacher.name;
+    }
+
+    if (!roomId) {
+      return c.json(
+        { error: "Tipo de usuário inválido" },
+        403
+      );
     }
 
     const news = await News.create({
-      roomId: group.roomId,
-      groupId: group._id,
-      authors: group.name,
+      roomId,
+      groupId:
+        user.role === "aluno" ? user.sub : null,
+      authorId,
+      authorRole,
+      authors,
       title,
       subtitle: subtitle || "",
       iconImage: iconImage || "",
@@ -502,47 +559,98 @@ rooms.post("/news", authMiddleware, async (c) => {
     return c.json({ ok: true, news });
   } catch (err) {
     console.error("Erro ao salvar notícia:", err);
-    return c.json({ error: "Erro ao salvar notícia" }, 500);
+    return c.json(
+      { error: "Erro ao salvar notícia" },
+      500
+    );
   }
 });
 
-// Editar notícia (só o grupo dono)
-rooms.put("/news/:id", authMiddleware, async (c) => {
-  try {
-    await conectarMongo();
-    const user = c.get("user");
-    const { title, subtitle, content, iconImage } = await c.req.json();
-
-    const news = await News.findById(c.req.param("id"));
-    if (!news) return c.json({ error: "Notícia não encontrada" }, 404);
-
-    if (String(news.groupId) !== String(user.sub)) {
-      return c.json({ error: "Você não pode editar esta notícia" }, 403);
-    }
-
-    if (title !== undefined) news.title = title;
-    if (subtitle !== undefined) news.subtitle = subtitle;
-    if (content !== undefined) news.content = content;
-    if (iconImage !== undefined) news.iconImage = iconImage;
-
-    await news.save();
-    return c.json({ ok: true, news });
-  } catch (err) {
-    console.error("Erro ao editar notícia:", err);
-    return c.json({ error: "Erro ao editar notícia" }, 500);
-  }
-});
-
-// Notícias do grupo do aluno logado
+// Notícias do grupo ou professor logado
 rooms.get("/news/mine", authMiddleware, async (c) => {
   try {
     await conectarMongo();
+
     const user = c.get("user");
-    const news = await News.find({ groupId: user.sub }).sort({ createdAt: -1 });
+
+    const filtro =
+      user.role === "aluno"
+        ? { groupId: user.sub }
+        : {
+            authorId: user.sub,
+            authorRole: "professor",
+          };
+
+    const news = await News.find(filtro).sort({
+      createdAt: -1,
+    });
+
     return c.json({ ok: true, news });
   } catch (err) {
-    console.error("Erro ao listar notícias do grupo:", err);
-    return c.json({ error: "Erro ao listar notícias" }, 500);
+    console.error(
+      "Erro ao listar notícias do usuário:",
+      err
+    );
+
+    return c.json(
+      { error: "Erro ao listar notícias" },
+      500
+    );
+  }
+});
+
+// Editar notícia (somente o autor)
+rooms.put("/news/:id", authMiddleware, async (c) => {
+  try {
+    await conectarMongo();
+
+    const user = c.get("user");
+    const { title, subtitle, content, iconImage } =
+      await c.req.json();
+
+    const news = await News.findById(
+      c.req.param("id")
+    );
+
+    if (!news) {
+      return c.json(
+        { error: "Notícia não encontrada" },
+        404
+      );
+    }
+
+    const ehDono =
+      String(news.authorId) === String(user.sub) &&
+      news.authorRole === user.role;
+
+    if (!ehDono) {
+      return c.json(
+        {
+          error:
+            "Você não pode editar esta notícia",
+        },
+        403
+      );
+    }
+
+    if (title !== undefined) news.title = title;
+    if (subtitle !== undefined) {
+      news.subtitle = subtitle;
+    }
+    if (content !== undefined) news.content = content;
+    if (iconImage !== undefined) {
+      news.iconImage = iconImage;
+    }
+
+    await news.save();
+
+    return c.json({ ok: true, news });
+  } catch (err) {
+    console.error("Erro ao editar notícia:", err);
+    return c.json(
+      { error: "Erro ao editar notícia" },
+      500
+    );
   }
 });
 
@@ -550,13 +658,20 @@ rooms.get("/news/mine", authMiddleware, async (c) => {
 rooms.get("/news", async (c) => {
   try {
     await conectarMongo();
+
     const news = await News.find()
       .sort({ createdAt: -1 })
-      .select("title subtitle iconImage authors content createdAt");
+      .select(
+        "title subtitle iconImage authors content createdAt"
+      );
+
     return c.json({ ok: true, news });
   } catch (err) {
     console.error("Erro ao listar notícias:", err);
-    return c.json({ error: "Erro ao listar notícias" }, 500);
+    return c.json(
+      { error: "Erro ao listar notícias" },
+      500
+    );
   }
 });
 
@@ -564,15 +679,29 @@ rooms.get("/news", async (c) => {
 rooms.get("/news/highlights", async (c) => {
   try {
     await conectarMongo();
-    const all = await News.find().select("title iconImage authors content createdAt");
-    const seed = new Date().toISOString().slice(0, 10);
+
+    const all = await News.find().select(
+      "title iconImage authors content createdAt"
+    );
+
+    const seed = new Date()
+      .toISOString()
+      .slice(0, 10);
+
     const sorted = [...all].sort((a, b) =>
       (seed + a._id).localeCompare(seed + b._id)
     );
-    return c.json({ ok: true, highlights: sorted.slice(0, 4) });
+
+    return c.json({
+      ok: true,
+      highlights: sorted.slice(0, 4),
+    });
   } catch (err) {
     console.error("Erro ao listar destaques:", err);
-    return c.json({ error: "Erro ao listar destaques" }, 500);
+    return c.json(
+      { error: "Erro ao listar destaques" },
+      500
+    );
   }
 });
 
@@ -580,12 +709,25 @@ rooms.get("/news/highlights", async (c) => {
 rooms.get("/news/:id", async (c) => {
   try {
     await conectarMongo();
-    const news = await News.findById(c.req.param("id"));
-    if (!news) return c.json({ error: "Notícia não encontrada" }, 404);
+
+    const news = await News.findById(
+      c.req.param("id")
+    );
+
+    if (!news) {
+      return c.json(
+        { error: "Notícia não encontrada" },
+        404
+      );
+    }
+
     return c.json({ ok: true, news });
   } catch (err) {
     console.error("Erro ao buscar notícia:", err);
-    return c.json({ error: "Erro ao buscar notícia" }, 500);
+    return c.json(
+      { error: "Erro ao buscar notícia" },
+      500
+    );
   }
 });
 
@@ -593,26 +735,50 @@ rooms.get("/news/:id", async (c) => {
 rooms.post("/news/:id/comments", async (c) => {
   try {
     await conectarMongo();
-    const { author, text } = await c.req.json();
-    if (!text || !text.trim()) {
-      return c.json({ error: "Escreva um comentário" }, 400);
-    }
-    const news = await News.findById(c.req.param("id"));
-    if (!news) return c.json({ error: "Notícia não encontrada" }, 404);
 
-    news.comments.push({ author: author || "Anônimo", text: text.trim() });
+    const { author, text } = await c.req.json();
+
+    if (!text || !text.trim()) {
+      return c.json(
+        { error: "Escreva um comentário" },
+        400
+      );
+    }
+
+    const news = await News.findById(
+      c.req.param("id")
+    );
+
+    if (!news) {
+      return c.json(
+        { error: "Notícia não encontrada" },
+        404
+      );
+    }
+
+    news.comments.push({
+      author: author || "Anônimo",
+      text: text.trim(),
+    });
+
     await news.save();
+
     return c.json({ ok: true, news });
   } catch (err) {
     console.error("Erro ao comentar:", err);
-    return c.json({ error: "Erro ao comentar" }, 500);
+    return c.json(
+      { error: "Erro ao comentar" },
+      500
+    );
   }
 });
 
+// Excluir notícia (somente o autor)
 rooms.delete("/news/:id", authMiddleware, async (c) => {
   try {
     await conectarMongo();
 
+    const user = c.get("user");
     const { id } = c.req.param();
 
     const news = await News.findById(id);
@@ -624,20 +790,33 @@ rooms.delete("/news/:id", authMiddleware, async (c) => {
       );
     }
 
+    const ehDono =
+      String(news.authorId) === String(user.sub) &&
+      news.authorRole === user.role;
+
+    if (!ehDono) {
+      return c.json(
+        {
+          error:
+            "Você não pode excluir esta notícia",
+        },
+        403
+      );
+    }
+
     await news.deleteOne();
 
     return c.json({
       ok: true,
-      message: "Matéria excluída com sucesso.",
+      message:
+        "Matéria excluída com sucesso.",
     });
   } catch (err) {
     console.error("Erro ao excluir matéria:", err);
-
     return c.json(
       { error: "Erro ao excluir a matéria." },
       500
     );
   }
 });
-
 export default rooms;
