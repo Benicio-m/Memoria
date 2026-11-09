@@ -708,9 +708,6 @@ function Home() {
                   </div>
                 ))}
               </div>
-            </Card>
-
-            <Card className="flex flex-col items-start justify-start shadow-accent-foreground shadow-md w-full max-w-7xl p-4 sm:p-6 mt-4 rounded-md">
               <div className="flex flex-wrap items-center justify-between gap-4 w-full">
                 <h1 className="text-xl sm:text-2xl md:text-4xl">
                   Minhas matérias
