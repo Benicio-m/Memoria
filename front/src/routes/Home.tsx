@@ -7,7 +7,7 @@ import { InstagramLogoIcon, FacebookLogoIcon } from '@phosphor-icons/react'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Input } from '@/components/ui/input';
-import { CheckIcon, Lock, LockOpen, Plus, Trash, XIcon } from 'lucide-react';
+import { CheckIcon, Lock, LockOpen, Pencil, Plus, Trash, XIcon } from 'lucide-react';
 import { Avatar, AvatarImage } from '../components/ui/avatar';
 import { toast, Toaster } from '@/components/ui/toast';
 import { Link } from 'react-router';
@@ -718,8 +718,7 @@ function Home() {
                   className="h-10 bg-green-600 hover:bg-green-700 text-accent-foreground rounded-md text-base sm:text-lg"
                   onClick={() => navigate("/adicionar-coluna")}
                 >
-                  <Plus className="mr-2 h-4 w-4" />
-                  Escrever matéria
+                  <Pencil className="mr-2 h-4 w-4" />
                 </Button>
               </div>
 
