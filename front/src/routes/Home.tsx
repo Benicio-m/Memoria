@@ -742,12 +742,12 @@ function Home() {
                       className="flex flex-wrap items-center justify-between gap-3 rounded-md border p-3 sm:p-4"
                     >
                       <div className="min-w-0">
-                        <h2 className="text-lg sm:text-xl break-words">
+                        <h2 className="text-lg sm:text-xl wrap-break-word">
                           {materia.title}
                         </h2>
 
                         {materia.subtitle && (
-                          <p className="text-sm opacity-70 break-words">
+                          <p className="text-sm opacity-70 wrap-break-word">
                             {materia.subtitle}
                           </p>
                         )}
