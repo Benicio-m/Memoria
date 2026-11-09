@@ -708,11 +708,12 @@ function Home() {
                   </div>
                 ))}
               </div>
-              <div className="flex flex-col flex-1 w-full items-start justify-center ml-8! font-konkhmer-sleokchher font-400 font-normal p-0">
-                <h1 className="text-xl sm:text-2xl md:text-4xl">
-                  Minhas matérias
-                </h1>
-
+              <div className="flex flex-wrap items-center justify-between gap-4 w-full">
+                <div className="flex flex-col flex-1 w-full items-start justify-center ml-8! font-konkhmer-sleokchher font-400 font-normal p-0">
+                  <h1 className="text-xl sm:text-2xl md:text-4xl">
+                    Minhas matérias
+                  </h1>
+                </div>
                 <Button
                   type="button"
                   className="h-10 bg-green-600 hover:bg-green-700 text-accent-foreground rounded-md text-base sm:text-lg"
