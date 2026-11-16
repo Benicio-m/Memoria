@@ -340,7 +340,7 @@ function ViewerHome() {
                 </section>
 
                 {/* Notícias por data */}
-                <section className="w-full space-y-6 border-t pt-6">
+                <section className="w-full space-y-8 border-t pt-6">
                   <h2 className="text-xl sm:text-2xl">
                     Notícias:
                   </h2>
