@@ -282,7 +282,7 @@ function ViewerHome() {
                         className="w-full"
                         opts={{
                           align: "start",
-                          loop: highlights.length > 1,
+                          loop: true,
                         }}
                       >
                         <CarouselContent>
