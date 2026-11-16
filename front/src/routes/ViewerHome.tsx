@@ -278,9 +278,9 @@ function ViewerHome() {
                   </h2>
 
                   {highlights.length > 0 ? (
-                    <div className="p-6 mt-4 flex flex-col flex-1">
+                    <div className="mt-4 flex flex-col flex-1">
                       <Carousel
-                        className="w-full p-0"
+                        className="w-full"
                         opts={{
                           align: "start",
                           loop: highlights.length > 1,
