@@ -278,7 +278,7 @@ function ViewerHome() {
                   </h2>
 
                   {highlights.length > 0 ? (
-                    <div className="p-10 mt-4 flex flex-col flex-1">
+                    <div className="p-6 mt-4 flex flex-col flex-1">
                       <Carousel
                         className="w-full"
                         opts={{
