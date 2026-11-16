@@ -302,21 +302,23 @@ function ViewerHome() {
                                 to={`/noticia/${noticia._id}`}
                                 className="block h-full"
                               >
-                                <Card className="h-full flex flex-col gap-3 p-4 pt-4">
+                                <Card className="h-full flex flex-col gap-3 p-4">
                                   {noticia.iconImage && (
-                                    <img
-                                      src={noticia.iconImage}
-                                      alt=""
-                                      loading="lazy"
-                                      className="w-full h-40 sm:h-48 object-cover rounded-md"
-                                    />
+                                    <div className="w-full shrink-0">
+                                      <img
+                                        src={noticia.iconImage}
+                                        alt=""
+                                        loading="lazy"
+                                        className="block w-full h-40 sm:h-48 object-cover rounded-md"
+                                      />
+                                    </div>
                                   )}
 
                                   <h3 className="text-lg sm:text-xl wrap-break-word">
                                     {noticia.title}
                                   </h3>
 
-                                  <p className="text-sm opacity-70">
+                                  <p className="text-sm opacity-70 wrap-break-word">
                                     Por: {noticia.authors}
                                   </p>
 
