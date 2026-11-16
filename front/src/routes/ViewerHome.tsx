@@ -278,11 +278,12 @@ function ViewerHome() {
                   </h2>
 
                   {highlights.length > 0 ? (
-                    <div className="flex flex-col flex-1">
+                    <div className="px-10 mt-4 flex flex-col">
                       <Carousel
-                        className="p-6 w-full"
+                        className="w-full mb-4"
                         opts={{
                           align: "start",
+                          slidesToScroll: 1,
                           loop: highlights.length > 1,
                         }}
                         plugins={[Autoplay({
@@ -295,7 +296,7 @@ function ViewerHome() {
                           {highlights.map((noticia) => (
                             <CarouselItem
                               key={noticia._id}
-                              className="md:basis-1/2"
+                              className="min-w-0 basis-full md:basis-1/2"
                             >
                               <Link
                                 to={`/noticia/${noticia._id}`}
