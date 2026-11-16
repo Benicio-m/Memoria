@@ -662,7 +662,7 @@ rooms.get("/news", async (c) => {
   }
 });
 
-// 4 destaques aleatórios (mudam a cada dia)
+// 4 destaques que mudam a cada dia
 rooms.get("/news/highlights", async (c) => {
   try {
     await conectarMongo();
@@ -675,13 +675,34 @@ rooms.get("/news/highlights", async (c) => {
       .toISOString()
       .slice(0, 10);
 
-    const sorted = [...all].sort((a, b) =>
-      (seed + a._id).localeCompare(seed + b._id)
-    );
+    // Gera um número estável para cada notícia no dia atual
+    function gerarPesoSemente(id: string) {
+      const texto = `${seed}-${id}`;
+      let hash = 0;
+
+      for (let i = 0; i < texto.length; i++) {
+        hash =
+          (hash * 31 + texto.charCodeAt(i)) %
+          1000000007;
+      }
+
+      return hash;
+    }
+
+    const destaques = [...all]
+      .map((noticia) => ({
+        noticia,
+        peso: gerarPesoSemente(
+          String(noticia._id)
+        ),
+      }))
+      .sort((a, b) => a.peso - b.peso)
+      .slice(0, 4)
+      .map((item) => item.noticia);
 
     return c.json({
       ok: true,
-      highlights: sorted.slice(0, 4),
+      highlights: destaques,
     });
   } catch (err) {
     console.error("Erro ao listar destaques:", err);
@@ -691,7 +712,6 @@ rooms.get("/news/highlights", async (c) => {
     );
   }
 });
-
 // Uma notícia completa
 rooms.get("/news/:id", async (c) => {
   try {
