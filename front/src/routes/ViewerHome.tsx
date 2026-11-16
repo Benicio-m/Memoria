@@ -308,7 +308,7 @@ function ViewerHome() {
                                       src={noticia.iconImage}
                                       alt=""
                                       loading="lazy"
-                                      className="w-full h-40 sm:h-48 object-cover rounded-md"
+                                      className="w-full h-40 sm:h-48 object-contain rounded-md"
                                     />
                                   )}
 
