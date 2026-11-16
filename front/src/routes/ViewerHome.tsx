@@ -302,13 +302,13 @@ function ViewerHome() {
                                 to={`/noticia/${noticia._id}`}
                                 className="block h-full"
                               >
-                                <Card className="py-2 h-full flex flex-col gap-3 p-4">
+                                <Card className="h-full flex flex-col gap-3 p-4">
                                   {noticia.iconImage && (
                                     <img
                                       src={noticia.iconImage}
                                       alt=""
                                       loading="lazy"
-                                      className="w-full h-40 sm:h-48 object-contain rounded-md"
+                                      className="w-full h-40 sm:h-48 object-cover rounded-md"
                                     />
                                   )}
 
