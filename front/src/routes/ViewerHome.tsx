@@ -14,6 +14,7 @@ import {
   FacebookLogoIcon,
   InstagramLogoIcon,
 } from "@phosphor-icons/react";
+import Autoplay from "embla-carousel-autoplay";
 
 type Noticia = {
   _id: string;
@@ -282,8 +283,13 @@ function ViewerHome() {
                         className="w-full"
                         opts={{
                           align: "start",
-                          loop: true,
+                          loop: highlights.length > 1,
                         }}
+                        plugins={[Autoplay({
+                          delay: 5000,
+                          stopOnInteraction: false,
+                          stopOnMouseEnter: true
+                        })]}
                       >
                         <CarouselContent>
                           {highlights.map((noticia) => (
