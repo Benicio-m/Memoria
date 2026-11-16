@@ -286,7 +286,7 @@ function ViewerHome() {
                           loop: highlights.length > 1,
                         }}
                         plugins={[Autoplay({
-                          delay: 5000,
+                          delay: 3000,
                           stopOnInteraction: false,
                           stopOnMouseEnter: true
                         })]}
