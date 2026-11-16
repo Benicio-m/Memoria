@@ -296,7 +296,7 @@ function ViewerHome() {
                           {highlights.map((noticia) => (
                             <CarouselItem
                               key={noticia._id}
-                              className="min-w-0 basis-full md:basis-1/2"
+                              className="py-2 md:basis-1/2"
                             >
                               <Link
                                 to={`/noticia/${noticia._id}`}
