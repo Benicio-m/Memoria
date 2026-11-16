@@ -676,7 +676,7 @@ rooms.get("/news/highlights", async (c) => {
       .slice(0, 10);
 
     // Gera um número estável para cada notícia no dia atual
-    function gerarPesoSemente(id: string) {
+    function gerarPesoSemente(id) {
       const texto = `${seed}-${id}`;
       let hash = 0;
 
