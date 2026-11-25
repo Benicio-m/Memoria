@@ -492,7 +492,7 @@ function Column() {
                   <li>João Pedro Lezo</li>
                   <li>Lorena Possignolo Ghiraldi</li>
                   <li>Isabella Rufino de Oliveira</li>
-                  <li>Vitor Emanuel Lopes de Reis</li>
+                  <li>Vitor Gabriel Lopes de Reis</li>
                   <li>Maria Eduarda Pimenta Rocha</li>
                 </ul>
               </section>
